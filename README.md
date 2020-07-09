@@ -1,2 +1,2 @@
 # gbros_watch
-wtch remote OS
+watch remote OS
