@@ -42,26 +42,26 @@ class Application:
 		self.__recv()
 		#time.sleep(0.05)
 		self.__send(pic)
-		#time.sleep(0.05)
+		time.sleep(0.05)
 
 	def recvData(self):
 		data=self.__recv()
 		#time.sleep(0.05)
 		self.__send(b'')
-		#time.sleep(0.1)
+		time.sleep(0.05)
 		return data
 
 	def setLed(self, status):
 		self.__recv()
 		#time.sleep(0.05)
 		self.__send(str(int(status)).encode())
-		#time.sleep(0.05)
+		time.sleep(0.05)
 
 	def setNeopixel(self, status):
 		self.__recv()
 		#time.sleep(0.05)
 		self.__send((str(status[0]).zfill(3)+str(status[1]).zfill(3)+str(status[2]).zfill(3)).encode())
-		#time.sleep(0.05)
+		time.sleep(0.05)
 
 	def sendImg_and_recvData(self):
 		if (self.rotation):
