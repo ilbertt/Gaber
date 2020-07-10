@@ -14,7 +14,6 @@ led=machine.Pin(16, Pin.OUT)
 oled_width = 128
 oled_height = 64
 oled = sh1106.SH1106_I2C(oled_width, oled_height, i2c)
-
 while(1):
   so=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   so.connect(adress)
