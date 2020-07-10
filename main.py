@@ -8,7 +8,12 @@ from PIL   			import Image
 import time
 heigth=128
 width=64
-app=Application("watch ip adress", 1234, heigth,width)
+app=Application("192.168.0.115", 1234, heigth,width)
+pic=Image.open('src/images/pic.png').convert('1')
+app.setImg(pic)
+app.sendImg()
+time.sleep(4)
+app.newImg()
 app.setText((10,0),"GBROS", 255,app.getFonts()[1])
 app.setText((32,32),"V 0.1", 255,app.getFonts()[1])
 app.sendImg()
