@@ -22,7 +22,7 @@ class Settings:
 			else:
 				data=int(self.app.recvData())
 
-			print(data)	
+			#print(data)	
 			if (data!=data_old and data==2):
 				data_old=data
 				if(i==2):

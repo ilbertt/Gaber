@@ -22,7 +22,7 @@ class Torch:
 			else:
 				data=int(self.app.recvData())
 			
-			print(data)	
+			#print(data)	
 			if (data!=data_old and data==2):
 				if(i==2):
 					i=0

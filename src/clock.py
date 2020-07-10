@@ -18,7 +18,7 @@ class Clock:
 			else:
 				data=int(self.app.recvData())
 
-			print(data)
+			#print(data)
 			if(data!=data_old and data==4):
 				next_app=True
 
