@@ -14,18 +14,18 @@ class Application:
 		self.addr=(adress, port)
 		self.contrast=0
 		self.rotation=0
-
+		self.so=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.so.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.so.bind(("0.0.0.0", 1234))
+		self.so.listen(1)
+		self.sc=0;
 	def __send(self,data):
-		sc=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		sc.connect(self.addr)
-		sc.send(data)
-		sc.close()
+		self.sc.send(data)
+		self.sc.close()
 
 	def __recv(self):
-		sc=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		sc.connect(self.addr)
-		data=sc.recv(1024)
-		sc.close()
+		self.sc, adr=self.so.accept()
+		data=self.sc.recv(1024)
 		return data
 
 	def sendImg(self):
@@ -39,29 +39,29 @@ class Application:
 
 		pic=pic.convert('1')
 		pic=pic.tobytes()
-		self.__send(pic)
-		time.sleep(0.05)
 		self.__recv()
-		time.sleep(0.05)
+		#time.sleep(0.05)
+		self.__send(pic)
+		#time.sleep(0.05)
 
 	def recvData(self):
-		self.__send(b'')
-		time.sleep(0.1)
 		data=self.__recv()
-		time.sleep(0.05)
+		#time.sleep(0.05)
+		self.__send(b'')
+		#time.sleep(0.1)
 		return data
 
 	def setLed(self, status):
-		self.__send(str(int(status)).encode())
-		time.sleep(0.05)
 		self.__recv()
-		time.sleep(0.05)
+		#time.sleep(0.05)
+		self.__send(str(int(status)).encode())
+		#time.sleep(0.05)
 
 	def setNeopixel(self, status):
-		self.__send((str(status[0]).zfill(3)+str(status[1]).zfill(3)+str(status[2]).zfill(3)).encode())
-		time.sleep(0.05)
 		self.__recv()
-		time.sleep(0.05)
+		#time.sleep(0.05)
+		self.__send((str(status[0]).zfill(3)+str(status[1]).zfill(3)+str(status[2]).zfill(3)).encode())
+		#time.sleep(0.05)
 
 	def sendImg_and_recvData(self):
 		if (self.rotation):
@@ -74,10 +74,10 @@ class Application:
 
 		pic=pic.convert('1')
 		pic=pic.tobytes()
-		self.__send(pic)
-		time.sleep(0.05)
 		data=self.__recv()
-		time.sleep(0.05)
+		#time.sleep(0.05)
+		self.__send(pic)
+		#time.sleep(0.05)
 		return data
 
 	def setText(self,pos,txt, txt_color, txt_font):

@@ -28,7 +28,7 @@ class Menu:
 						self.app.setText((10,10+(x+1)*10),self.applications[(page-1)*n+x+1][0], 255,self.app.getFonts()[0])
 				
 
-				data=int(self.app.sendImg_and_recvData())
+				data=self.app.sendImg_and_recvData()
 				changed=False
 			else:
 				data=int(self.app.recvData())
