@@ -1,0 +1,18 @@
+{
+    "in":{
+        "UP": {
+            "number": 13
+        },
+        "DOWN": {
+            "number": 12
+        },
+        "SELECT": {
+            "number": 14
+        }
+    },
+    "out": {
+        "LED": {
+            "number": 16
+        }
+    }
+}

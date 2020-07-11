@@ -23,7 +23,7 @@ class Settings:
 				data=int(self.app.recvData())
 
 			#print(data)	
-			if (data!=data_old and data==2):
+			if (data!=data_old and data==2**self.app.inPins['UP']['number']):
 				data_old=data
 				if(i==2):
 					i=0
@@ -31,7 +31,7 @@ class Settings:
 					i+=1
 
 				change=True
-			elif (data!=data_old and data==1):
+			elif (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
 				data_old=data
 				if(i==0):
 					i=2
@@ -39,7 +39,7 @@ class Settings:
 					i-=1
 
 				change=True
-			elif(data!=data_old and data==4):
+			elif(data!=data_old and data==2**self.app.inPins['SELECT']['number']):
 				data_old=data
 				if(i==2):
 					i_tmp=i

@@ -23,27 +23,27 @@ class Torch:
 				data=int(self.app.recvData())
 			
 			#print(data)	
-			if (data!=data_old and data==2):
+			if (data!=data_old and data==2**self.app.inPins['UP']['number']):
 				if(i==2):
 					i=0
 				else:
 					i+=1
 
 				change=True
-			elif (data!=data_old and data==1):
+			elif (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
 				if(i==0):
 					i=2
 				else:
 					i-=1
 
 				change=True
-			elif(data!=data_old and data==4):
+			elif(data!=data_old and data==2**self.app.inPins['SELECT']['number']):
 				if(i==2):
 					i_tmp=i
 					next_app=True
 				elif(i==1):
 					self.ledstatus=not self.ledstatus;
-					self.app.setLed(self.ledstatus)
+					self.app.setOutPin(16, self.ledstatus)
 				elif(i==0):
 					self.npstatus= not self.npstatus
 					self.app.setNeopixel([255*self.npstatus,255*self.npstatus,255*self.npstatus])

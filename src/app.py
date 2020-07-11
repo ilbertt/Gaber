@@ -1,6 +1,7 @@
 import socket
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import time
+import json
 
 class Application:
 
@@ -20,6 +21,8 @@ class Application:
 		self.so.listen(1)
 		self.sc=0
 		self.data=0
+		self.inPins = {}
+		self.outPins = {}
 
 	def __send(self,data):
 		self.sc.send(data)
@@ -34,7 +37,17 @@ class Application:
 			pass
 
 		return self.data
-
+	
+	def getPinConfig(self, path):
+		with open(path, "r") as rf:
+			tmp = json.load(rf)
+			self.inPins = tmp["in"]
+			self.outPins = tmp["out"]
+	
+	def setInPins(self):
+		for pin in self.inPins:
+			self.setInPin(self.inPins[pin]['number'])
+	
 	def sendImg(self):
 		if (self.rotation):
 			pic=self.img
@@ -49,6 +62,18 @@ class Application:
 		self.__recv()
 		#time.sleep(0.05)
 		self.__send(pic)
+		time.sleep(0.1)
+
+	def setOutPin(self, pin, value):
+		self.__recv()
+		#time.sleep(0.05)
+		self.__send(str(pin*10+int(not value)).encode())
+		time.sleep(0.1)
+
+	def setInPin(self, pin):
+		self.__recv()
+		#time.sleep(0.05)
+		self.__send(str(pin).encode())
 		time.sleep(0.1)
 
 	def recvData(self):

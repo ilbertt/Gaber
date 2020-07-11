@@ -19,7 +19,7 @@ class Clock:
 				data=int(self.app.recvData())
 
 			#print(data)
-			if(data!=data_old and data==4):
+			if(data!=data_old and data==2**self.app.inPins['SELECT']['number']):
 				next_app=True
 
 			if (next_app and data==0):
