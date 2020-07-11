@@ -18,15 +18,22 @@ class Application:
 		self.so.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.so.bind(("0.0.0.0", 1234))
 		self.so.listen(1)
-		self.sc=0;
+		self.sc=0
+		self.data=0
+
 	def __send(self,data):
 		self.sc.send(data)
 		self.sc.close()
 
 	def __recv(self):
 		self.sc, adr=self.so.accept()
-		data=self.sc.recv(1024)
-		return data
+		self.sc.settimeout(0.01)
+		try:
+			self.data=self.sc.recv(1024)
+		except:
+			pass
+
+		return self.data
 
 	def sendImg(self):
 		if (self.rotation):
@@ -42,20 +49,20 @@ class Application:
 		self.__recv()
 		#time.sleep(0.05)
 		self.__send(pic)
-		#time.sleep(0.1)
+		time.sleep(0.1)
 
 	def recvData(self):
 		data=self.__recv()
 		#time.sleep(0.05)
 		self.__send(b'')
-		#time.sleep(0.1)
+		time.sleep(0.1)
 		return data
 
 	def setLed(self, status):
 		self.__recv()
 		#time.sleep(0.05)
 		self.__send(str(int(status)).encode())
-		#time.sleep(0.1)
+		time.sleep(0.1)
 
 	def setNeopixel(self, status):
 		self.__recv()
@@ -77,7 +84,7 @@ class Application:
 		data=self.__recv()
 		#time.sleep(0.05)
 		self.__send(pic)
-		#time.sleep(0.05)
+		time.sleep(0.1)
 		return data
 
 	def setText(self,pos,txt, txt_color, txt_font):

@@ -33,7 +33,7 @@ class Menu:
 			else:
 				data=int(self.app.recvData())
 
-			#print(data)	
+			print(data)	
 			if (data!=data_old and data==2):
 				if(self.i==len(self.applications)-1):
 					self.i=0
