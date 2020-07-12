@@ -26,7 +26,8 @@ while(1):
 			s=so.read()
 			so.close()
 			if(len(s)==2):
-				pin_in.append(int(s))
+				if( not ( int(s) in pin_in)):
+					pin_in.append(int(s))
 			elif(len(s)==3):
 				pin = int(int(s)/10)
 				Pin(pin, Pin.OUT).value(int(s)%10)
