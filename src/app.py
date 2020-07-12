@@ -158,12 +158,12 @@ class Application:
 
 	def setContrast(self, contrast):
 		self.config["contrast"]=contrast
-		with open(self.confpath, "r") as rf:
+		with open(self.confpath, "w") as rf:
 			json.dump(self.config, rf)
 
 	def setRotation(self, rotation):
 		self.config["rotation"]=rotation
-		with open(self.confpath, "r") as rf:
+		with open(self.confpath, "w") as rf:
 			json.dump(self.config, rf)
 
 	def getFonts(self):
