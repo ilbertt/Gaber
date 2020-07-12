@@ -21,6 +21,7 @@ class Application:
 		self.config={"contrast": 0,  "rotation": 0}
 		self.sc=0
 		self.data=0
+		self.ispic=False
 		self.neoPins=[15]
 		self.inPins = {}
 		self.outPins = {}
@@ -114,8 +115,9 @@ class Application:
 		else:
 			pic=self.img.rotate(180)
 
-		if(self.config["contrast"]):
+		if(self.config["contrast"] and not(self.ispic)):
 			pic=ImageOps.colorize(pic, (255,255,255), (0,0,0))
+			self.ispic=False
 
 		pic=pic.convert('1')
 		pic=pic.tobytes()
@@ -144,8 +146,9 @@ class Application:
 			else:
 				pic=self.img.rotate(180)
 
-			if(self.config["contrast"]):
+			if(self.config["contrast"] and not(self.ispic) ):
 				pic=ImageOps.colorize(pic, (255,255,255), (0,0,0))
+				self.ispic=False
 
 			pic=pic.convert('1')
 			pic=pic.tobytes()
@@ -171,6 +174,7 @@ class Application:
 
 	def setImg(self, img):
 		self.img=img.convert('L')
+		self.ispic = True
 
 	def addFont(self, font, font_size):
 		self.fonts.append(ImageFont.truetype(font, font_size))
