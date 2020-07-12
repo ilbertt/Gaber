@@ -13,12 +13,12 @@ class Application:
 		self.d=ImageDraw.Draw(self.img)
 		self.d.rectangle((0,0,self.heigth,self.width),fill=0)
 		self.addr=(adress, port)
-		self.contrast=0
-		self.rotation=0
 		self.so=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.so.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.so.bind(("0.0.0.0", 1234))
 		self.so.listen(1)
+		self.confpath=""
+		self.config={"contrast": 0,  "rotation": 0}
 		self.sc=0
 		self.data=0
 		self.neoPins=[15]
@@ -52,7 +52,13 @@ class Application:
 				self.heigth=tmp["display"]["heigth"]
 				self.width=tmp["display"]["width"]
 				self.setDisplqy(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width)
-	
+
+
+	def getConfig(self, path):
+		self.confpath=path
+		with open(path, "r") as rf:
+			self.config=json.load(rf)
+
 	def setInPins(self):
 		for pin in self.inPins:
 			self.setInPin(self.inPins[pin]['number'])
@@ -103,12 +109,12 @@ class Application:
 		return data
 
 	def sendImg_and_recvData(self):
-		if (self.rotation):
+		if (self.config["rotation"]):
 			pic=self.img
 		else:
 			pic=self.img.rotate(180)
 
-		if(self.contrast):
+		if(self.config["contrast"]):
 			pic=ImageOps.colorize(pic, (255,255,255), (0,0,0))
 
 		pic=pic.convert('1')
@@ -133,12 +139,12 @@ class Application:
 
 	def sendImg(self):
 		if(self.heigth and self.width):
-			if (self.rotation):
+			if (self.config["rotation"]):
 				pic=self.img
 			else:
 				pic=self.img.rotate(180)
-			
-			if(self.contrast):
+
+			if(self.config["contrast"]):
 				pic=ImageOps.colorize(pic, (255,255,255), (0,0,0))
 
 			pic=pic.convert('1')
@@ -151,10 +157,14 @@ class Application:
 		self.d.text(pos, txt, txt_color,font=txt_font)
 
 	def setContrast(self, contrast):
-		self.contrast = int(contrast)
+		self.config["contrast"]=contrast
+		with open(self.confpath, "r") as rf:
+			json.dump(self.config, rf)
 
 	def setRotation(self, rotation):
-		self.rotation = int(rotation)
+		self.config["rotation"]=rotation
+		with open(self.confpath, "r") as rf:
+			json.dump(self.config, rf)
 
 	def getFonts(self):
 		return self.fonts
