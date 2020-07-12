@@ -15,7 +15,7 @@ class Application:
 		self.addr=(adress, port)
 		self.so=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.so.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.so.bind(("0.0.0.0", 1234))
+		self.so.bind(self.addr)
 		self.so.listen(1)
 		self.confpath=""
 		self.config={"contrast": 0,  "rotation": 0}
