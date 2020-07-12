@@ -5,9 +5,10 @@ import json
 
 class Application:
 
-	def __init__(self, adress, port):
+	def __init__(self, adress, port, username):
 		self.heigth=0
 		self.width=0
+		self.username = username
 		self.fonts = [ImageFont.truetype("Arial.ttf",11),ImageFont.truetype("Arial.ttf",30)]
 		self.img=Image.new("L",(self.heigth,self.width))
 		self.d=ImageDraw.Draw(self.img)

@@ -31,7 +31,3 @@ class Main(threading.Thread):
         applications=[["CLOCK", Clock(app)],["TORCH", Torch(app)],["WEATHER", Weather(app)],["SETTINGS",Settings(app)]]
         menu=Menu(app, applications)
         applications[0][1].run(menu)
-
-
-Main("0.0.0.0",1234,"gaber").run()
-
