@@ -5,9 +5,9 @@ import json
 
 class Application:
 
-	def __init__(self, adress, port, heigth,width):
-		self.heigth=heigth
-		self.width=width
+	def __init__(self, adress, port):
+		self.heigth=0
+		self.width=0
 		self.fonts = [ImageFont.truetype("Arial.ttf",11),ImageFont.truetype("Arial.ttf",30)]
 		self.img=Image.new("L",(self.heigth,self.width))
 		self.d=ImageDraw.Draw(self.img)
@@ -21,6 +21,7 @@ class Application:
 		self.so.listen(1)
 		self.sc=0
 		self.data=0
+		self.neoPins=[15]
 		self.inPins = {}
 		self.outPins = {}
 
@@ -32,7 +33,7 @@ class Application:
 		self.sc, adr=self.so.accept()
 		self.sc.settimeout(0.01)
 		try:
-			self.data=self.sc.recv(1024)
+			self.data=int(self.sc.recv(1024))
 		except:
 			pass
 
@@ -43,57 +44,63 @@ class Application:
 			tmp = json.load(rf)
 			self.inPins = tmp["in"]
 			self.outPins = tmp["out"]
+			self.setInPins()
+			for neo in tmp["neopixel"]:
+				self.setNeoPin(tmp["neopixel"][neo]["number"])
+
+			if(tmp["display"]):
+				self.heigth=tmp["display"]["heigth"]
+				self.width=tmp["display"]["width"]
+				self.setDisplqy(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width)
 	
 	def setInPins(self):
 		for pin in self.inPins:
 			self.setInPin(self.inPins[pin]['number'])
-	
-	def sendImg(self):
-		if (self.rotation):
-			pic=self.img
-		else:
-			pic=self.img.rotate(180)
-		
-		if(self.contrast):
-			pic=ImageOps.colorize(pic, (255,255,255), (0,0,0))
 
-		pic=pic.convert('1')
-		pic=pic.tobytes()
-		self.__recv()
-		#time.sleep(0.05)
-		self.__send(pic)
-		time.sleep(0.1)
+	def setNeoPin(self, pin):
+		self.neoPins.append(pin)
 
 	def setOutPin(self, pin, value):
 		self.__recv()
-		#time.sleep(0.05)
 		self.__send(str(pin*10+int(not value)).encode())
-		time.sleep(0.1)
+		time.sleep(0.05)
 
 	def setInPin(self, pin):
 		self.__recv()
-		#time.sleep(0.05)
 		self.__send(str(pin).encode())
-		time.sleep(0.1)
+		time.sleep(0.05)
+
+	def setDisplqy(self, sda, scl, heigth, width):
+		self.heigth = heigth
+		self.width = width
+		self.__recv()
+		self.__send((str(sda).zfill(2)+str(scl).zfill(2)+str(heigth).zfill(3)+str(width).zfill(3)).encode())
+		time.sleep(0.05)
+		
+	def setNeopixel(self, status, pin=-1):
+		if(len(self.neoPins)):
+			self.__recv()
+			if(pin==-1):
+				self.__send((str(self.neoPins[0]).zfill(2)+str(status[0]).zfill(3)+str(status[1]).zfill(3)+str(status[2]).zfill(3)).encode())
+			elif(pin in self.neoPins):
+				self.__send((str(pin).zfill(2)+str(status[0]).zfill(3)+str(status[1]).zfill(3)+str(status[2]).zfill(3)).encode())
+			else:
+				self.__send(b'')
+
+			time.sleep(0.05)
 
 	def recvData(self):
 		data=self.__recv()
-		#time.sleep(0.05)
 		self.__send(b'')
-		time.sleep(0.1)
+		time.sleep(0.05)
+		buttons={}
+		for pin in self.inPins:
+			if(data & 1<<self.inPins[pin]["number"]):
+				buttons[pin]=1
+			else:
+				buttons[pin]=0
+		print(buttons)
 		return data
-
-	def setLed(self, status):
-		self.__recv()
-		#time.sleep(0.05)
-		self.__send(str(int(status)).encode())
-		time.sleep(0.1)
-
-	def setNeopixel(self, status):
-		self.__recv()
-		#time.sleep(0.05)
-		self.__send((str(status[0]).zfill(3)+str(status[1]).zfill(3)+str(status[2]).zfill(3)).encode())
-		time.sleep(0.1)
 
 	def sendImg_and_recvData(self):
 		if (self.rotation):
@@ -107,10 +114,38 @@ class Application:
 		pic=pic.convert('1')
 		pic=pic.tobytes()
 		data=self.__recv()
+		buttons={}
 		#time.sleep(0.05)
-		self.__send(pic)
-		time.sleep(0.1)
+		if(self.heigth and self.width):
+			self.__send(pic)
+		else:
+			self.__send(b'')
+
+		time.sleep(0.05)
+		for pin in self.inPins:
+			if(data & 1<<self.inPins[pin]["number"]):
+				buttons[pin]=1
+			else:
+				buttons[pin]=0
+		print(buttons)
+
 		return data
+
+	def sendImg(self):
+		if(self.heigth and self.width):
+			if (self.rotation):
+				pic=self.img
+			else:
+				pic=self.img.rotate(180)
+			
+			if(self.contrast):
+				pic=ImageOps.colorize(pic, (255,255,255), (0,0,0))
+
+			pic=pic.convert('1')
+			pic=pic.tobytes()
+			self.__recv()
+			self.__send(pic)
+			time.sleep(0.05)
 
 	def setText(self,pos,txt, txt_color, txt_font):
 		self.d.text(pos, txt, txt_color,font=txt_font)

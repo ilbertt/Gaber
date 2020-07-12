@@ -16,13 +16,13 @@ _SET_PAGE_ADDRESS    = const(0xB0)
 
 
 class SH1106:
-    def __init__(self, width, height, external_vcc):
+    def __init__(self, width, heigth, external_vcc):
         self.width = width
-        self.height = height
+        self.heigth = heigth
         self.external_vcc = external_vcc
-        self.pages = self.height // 8
+        self.pages = self.heigth // 8
         self.buffer = bytearray(self.pages * self.width)
-        fb = framebuf.FrameBuffer(self.buffer, self.width, self.height,
+        fb = framebuf.FrameBuffer(self.buffer, self.width, self.heigth,
                                   framebuf.MVLSB)
         self.framebuf = fb
 # set shortcuts for the methods of framebuf
@@ -72,7 +72,7 @@ class SH1106:
         self.write_cmd(_SET_NORM_INV | (invert & 1))
 
     def show(self):
-        for page in range(self.height // 8):
+        for page in range(self.heigth // 8):
             self.write_cmd(_SET_PAGE_ADDRESS | page)
             self.write_cmd(_LOW_COLUMN_ADDRESS | 2)
             self.write_cmd(_HIGH_COLUMN_ADDRESS | 0)
@@ -91,7 +91,7 @@ class SH1106:
 
 
 class SH1106_I2C(SH1106):
-    def __init__(self, width, height, i2c, res=None, addr=0x3c,
+    def __init__(self, width, heigth, i2c, res=None, addr=0x3c,
                  external_vcc=False):
         self.i2c = i2c
         self.addr = addr
@@ -103,7 +103,7 @@ class SH1106_I2C(SH1106):
             self.write_data = self.hw_write_data
         if res is not None:
             res.init(res.OUT, value=1)
-        super().__init__(width, height, external_vcc)
+        super().__init__(width, heigth, external_vcc)
 
     def write_cmd(self, cmd):
         self.temp[0] = 0x80  # Co=1, D/C#=0
@@ -126,7 +126,7 @@ class SH1106_I2C(SH1106):
 
 
 class SH1106_SPI(SH1106):
-    def __init__(self, width, height, spi, dc, res=None, cs=None,
+    def __init__(self, width, heigth, spi, dc, res=None, cs=None,
                  external_vcc=False):
         self.rate = 10 * 1000 * 1000
         dc.init(dc.OUT, value=0)
@@ -138,7 +138,7 @@ class SH1106_SPI(SH1106):
         self.dc = dc
         self.res = res
         self.cs = cs
-        super().__init__(width, height, external_vcc)
+        super().__init__(width, heigth, external_vcc)
 
     def write_cmd(self, cmd):
         self.spi.init(baudrate=self.rate, polarity=0, phase=0)

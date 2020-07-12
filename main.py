@@ -8,8 +8,9 @@ from PIL   			import Image
 import time
 heigth=128
 width=64
-app=Application("192.168.0.115", 1234, heigth,width)
-pic=Image.open('src/images/pic.png').convert('1')
+app=Application("0.0.0.0", 1234)
+app.getPinConfig("src/config/pinout.json")
+pic=Image.open('src/images/pic.png')
 app.setImg(pic)
 app.sendImg()
 time.sleep(4)
@@ -17,9 +18,7 @@ app.newImg()
 app.setText((10,0),"GBROS", 255,app.getFonts()[1])
 app.setText((32,32),"V 0.1", 255,app.getFonts()[1])
 app.sendImg()
-app.getPinConfig("src/config/pins.json")
-app.setInPins()
-
 time.sleep(2)
 applications=[["CLOCK", Clock(app)],["TORCH", Torch(app)],["WEATHER", Weather(app)],["SETTINGS",Settings(app)]]
-Menu(app, applications).run()
+menu=Menu(app, applications)
+applications[0][1].run(menu)
