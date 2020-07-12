@@ -10,6 +10,7 @@ heigth=128
 width=64
 app=Application("0.0.0.0", 1234)
 app.getPinConfig("src/config/pinout.json")
+app.getConfig("src/config/config.json")
 pic=Image.open('src/images/pic.png')
 app.setImg(pic)
 app.sendImg()
