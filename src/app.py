@@ -117,6 +117,8 @@ class Application:
 
 		if(self.config["contrast"] and not(self.ispic)):
 			pic=ImageOps.colorize(pic, (255,255,255), (0,0,0))
+		
+		if(self.ispic):
 			self.ispic=False
 
 		pic=pic.convert('1')
@@ -148,6 +150,8 @@ class Application:
 
 			if(self.config["contrast"] and not(self.ispic) ):
 				pic=ImageOps.colorize(pic, (255,255,255), (0,0,0))
+			
+			if(self.ispic):
 				self.ispic=False
 
 			pic=pic.convert('1')
