@@ -1,9 +1,9 @@
-from gaber.src.app   		import Application
-from gaber.src.menu  		import Menu
-from gaber.src.clock 		import Clock
-from gaber.src.torch 		import Torch
-from gaber.src.weather	import Weather
-from gaber.src.settings 	import Settings
+from eulero.src.app   		import Application
+from eulero.src.menu  		import Menu
+from eulero.src.clock 		import Clock
+from eulero.src.torch 		import Torch
+from eulero.src.weather	import Weather
+from eulero.src.settings 	import Settings
 from PIL   			import Image
 import time
 import threading

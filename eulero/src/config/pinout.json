@@ -1,10 +1,10 @@
 {
     "in":{
         "UP": {
-            "number": 13
+            "number": 12
         },
         "DOWN": {
-            "number": 12
+            "number": 13
         },
         "SELECT": {
             "number": 14
