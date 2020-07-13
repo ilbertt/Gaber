@@ -2,6 +2,7 @@ import socket
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import time
 import json
+import sys
 
 class Application:
 
@@ -18,6 +19,7 @@ class Application:
 		self.so.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.so.bind(self.addr)
 		self.so.listen(1)
+		self.so.settimeout(120)
 		self.confpath=""
 		self.config={"contrast": 0,  "rotation": 0}
 		self.sc=0
@@ -32,7 +34,11 @@ class Application:
 		self.sc.close()
 
 	def __recv(self):
-		self.sc, adr=self.so.accept()
+		try:
+			self.sc, adr=self.so.accept()
+		except:
+			sys.exit()
+		
 		self.sc.settimeout(0.05)
 		try:
 			self.data=int(self.sc.recv(1024))
