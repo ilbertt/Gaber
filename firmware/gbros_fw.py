@@ -1,4 +1,4 @@
-from machine import Pin, I2C
+from machine import Pin, I2C, PWM
 import neopixel
 import sh1106
 import socket
@@ -26,7 +26,7 @@ def run(adress):
 				if(len(s)==2):
 					if( not ( int(s) in pin_in)):
 						pin_in.append(int(s))
-						
+
 				elif(len(s)==3):
 					pin = int(int(s)/10)
 					Pin(pin, Pin.OUT).value(int(s)%10)
