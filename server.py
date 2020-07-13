@@ -19,7 +19,7 @@ while(1):
 	print("started")
 	for thread in threads:
 		if(not thread.isAlive()):
-			uport=thread.port
+			uport=thread.app.port
 			threads.remove(thread)
 			occports.remove(uport)
 			freeports.append(uport)
