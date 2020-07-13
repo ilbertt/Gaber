@@ -2,7 +2,7 @@ import network
 import socket
 import gbros_fw
 
-adress="192.168.0.107"
+adress="192.168.0.8"
 connport=1234
 wlan=network.WLAN()
 mac=wlan.config('mac')
