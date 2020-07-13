@@ -18,7 +18,6 @@ class Main(threading.Thread):
     def run(self):
         app=Application(self.adress, self.port, self.username)
         app.getPinConfig("gaber/src/config/pinout.json")
-        print("dkdk")
         app.getConfig("gaber/src/config/config.json")
         pic=Image.open('gaber/src/images/pic.png')
         app.setImg(pic)

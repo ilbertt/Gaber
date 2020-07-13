@@ -33,7 +33,7 @@ class Application:
 
 	def __recv(self):
 		self.sc, adr=self.so.accept()
-		self.sc.settimeout(0.01)
+		self.sc.settimeout(0.05)
 		try:
 			self.data=int(self.sc.recv(1024))
 		except:
