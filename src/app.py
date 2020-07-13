@@ -54,7 +54,7 @@ class Application:
 			self.inPins = tmp["in"]
 			self.outPins = tmp["out"]
 			self.setInPins()
-			if(tmp["pwm"]):
+			if("pwm" in tmp):
 				self.pwmPins= tmp["pwm"]
 
 			for neo in tmp["neopixel"]:
