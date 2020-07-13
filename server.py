@@ -2,6 +2,7 @@ import socket
 import importlib
 import json
 import binascii
+from src.app import Application
 
 freeports=[1235,1236,1237, 1238]
 occports=[]
@@ -38,7 +39,8 @@ while(1):
 	print(username)
 	rf.close()
 	MyClass = getattr(importlib.import_module(username+".main"), "Main")
-	user=MyClass(adress, port, username)
+	app=Application(adress, port, username)
+	user=MyClass(app)
 	threads.append(user)
 	user.start()
 	
