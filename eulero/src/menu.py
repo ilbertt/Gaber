@@ -34,7 +34,7 @@ class Menu:
 				data=int(self.app.recvData())
 
 			print(data)	
-			if (data!=data_old and data==2**self.app.inPins['UP']['number']):
+			if (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
 				if(self.i==len(self.applications)-1):
 					self.i=0
 				else:
@@ -42,7 +42,7 @@ class Menu:
 
 				page=int(self.i/n)+1
 				changed=True
-			elif (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
+			elif (data!=data_old and data==2**self.app.inPins['UP']['number']):
 				if(self.i==0):
 					self.i=len(self.applications)-1
 				else:
