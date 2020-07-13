@@ -26,11 +26,23 @@ def run(adress):
 				if(len(s)==2):
 					if( not ( int(s) in pin_in)):
 						pin_in.append(int(s))
+						
 				elif(len(s)==3):
 					pin = int(int(s)/10)
 					Pin(pin, Pin.OUT).value(int(s)%10)
 					if pin in pin_in:
 						pin_in.remove(pin)
+
+				elif(len(s)==9):
+					s=int(s)
+					duty=s%10000
+					s=int(s/10000)
+					freq=s%1000+1
+					pin=int(s/1000)
+					PWM(Pin(pin), freq=freq, duty=duty)
+					if pin in pin_in:
+						pin_in.remove(pin)
+
 				elif(len(s)==10):
 					s=int(s)
 					oled_heigth=s%1000

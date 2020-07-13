@@ -28,6 +28,7 @@ class Application:
 		self.neoPins=[15]
 		self.inPins = {}
 		self.outPins = {}
+		self.pwmPins= {}
 
 	def __send(self,data):
 		self.sc.send(data)
@@ -53,6 +54,9 @@ class Application:
 			self.inPins = tmp["in"]
 			self.outPins = tmp["out"]
 			self.setInPins()
+			if(tmp["pwm"]):
+				self.pwmPins= tmp["pwm"]
+
 			for neo in tmp["neopixel"]:
 				self.setNeoPin(tmp["neopixel"][neo]["number"])
 
@@ -102,6 +106,11 @@ class Application:
 				self.__send(b'')
 
 			time.sleep(0.05)
+
+	def setPwm(self, pin, freq, duty):
+		self.__recv()
+		self.__send((str(pin).zfill(2)+str(freq).zfill(3)+str(duty).zfill(4)).encode())
+		time.sleep(0.05)
 
 	def recvData(self):
 		data=self.__recv()
