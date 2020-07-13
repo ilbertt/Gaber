@@ -1,9 +1,9 @@
-from src.app   		import Application
-from src.menu  		import Menu
-from src.clock 		import Clock
-from src.torch 		import Torch
-from src.weather	import Weather
-from src.settings 	import Settings
+from gaber.src.app   		import Application
+from gaber.src.menu  		import Menu
+from gaber.src.clock 		import Clock
+from gaber.src.torch 		import Torch
+from gaber.src.weather	import Weather
+from gaber.src.settings 	import Settings
 from PIL   			import Image
 import time
 import threading
@@ -17,9 +17,10 @@ class Main(threading.Thread):
     
     def run(self):
         app=Application(self.adress, self.port, self.username)
-        app.getPinConfig("src/config/pinout.json")
-        app.getConfig("src/config/config.json")
-        pic=Image.open('src/images/pic.png')
+        app.getPinConfig("gaber/src/config/pinout.json")
+        print("dkdk")
+        app.getConfig("gaber/src/config/config.json")
+        pic=Image.open('gaber/src/images/pic.png')
         app.setImg(pic)
         app.sendImg()
         time.sleep(4)
@@ -32,6 +33,4 @@ class Main(threading.Thread):
         menu=Menu(app, applications)
         applications[0][1].run(menu)
 
-
-Main("0.0.0.0",1234,"gaber").run()
 

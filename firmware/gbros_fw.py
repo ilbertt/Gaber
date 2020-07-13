@@ -7,7 +7,6 @@ import machine
 import time
 def run(adress):
 	pin_in=[]
-	led=machine.Pin(16, Pin.OUT)
 	oled_width = 0
 	oled_heigth = 0
 	oled = 0
