@@ -41,14 +41,14 @@ class Weather:
 			if(data!=data_old and data==2**self.app.inPins['SELECT']['number']):
 				next_app=True
 
-			if (data!=data_old and data==2**self.app.inPins['UP']['number']):
+			if (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
 				show=True
 				if(self.i==1):
 					self.i=0
 				else:
 					self.i+=1
 
-			elif (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
+			elif (data!=data_old and data==2**self.app.inPins['UP']['number']):
 				show=True
 				if(self.i==0):
 					self.i=1

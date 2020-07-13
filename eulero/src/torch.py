@@ -23,14 +23,14 @@ class Torch:
 				data=int(self.app.recvData())
 			
 			#print(data)	
-			if (data!=data_old and data==2**self.app.inPins['UP']['number']):
+			if (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
 				if(i==2):
 					i=0
 				else:
 					i+=1
 
 				change=True
-			elif (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
+			elif (data!=data_old and data==2**self.app.inPins['UP']['number']):
 				if(i==0):
 					i=2
 				else:
