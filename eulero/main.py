@@ -30,3 +30,5 @@ class Main(threading.Thread):
         applications[0][1].run(menu)
 
 
+    def sendPinConfig(self):
+        self.app.getPinConfig("eulero/src/config/pinout.json")
