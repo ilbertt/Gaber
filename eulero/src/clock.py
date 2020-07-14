@@ -13,7 +13,7 @@ class Clock:
 		self.cy = int(self.app.width/2)
 		self.r = self.cy
 
-		bounding_box = [(self.cx-self.r, self.cy-self.r),(self.cx+self.r, self.cy+self.r - 1)]
+		bounding_box = [(self.cx-self.r, self.cy-self.r),(self.cx+self.r, self.cy+self.r-1)]
 
 		clock_type = "analogic"
 		old_clock_type = ""
@@ -69,23 +69,26 @@ class Clock:
 
 	def needleShape(self, angle, radius):
     
-		sx = self.cx
-		sy = self.cy - radius + 2
+		cx = self.cx
+		cy = self.cy - 1
+		sx = cx
+		sy = cy - radius + 2
 
 		if angle == 30:
-			sx = self.cx
-			sy = self.cy + radius - 2
-			#print(angle, [(self.cx, self.cy),(sx, sy)])
+			sx = cx
+			sy = cy + radius - 2
 
 		if angle > 0:
 			rad = (angle/30) * math.pi - math.pi/2
 			m = math.tan( rad )
 			if angle < 30:
-				sx = int( radius / math.sqrt(1+math.pow(m,2)) ) + self.cx
-				sy = int(  m*(sx-self.cx) ) + self.cy
+				sx = int( radius / math.sqrt(1+math.pow(m,2)) ) + cx
+				sy = int(  m*(sx-cx) ) + cy
 			elif angle > 30:
-				sx = -int( radius / math.sqrt(1+math.pow(m,2)) ) + self.cx
-				sy = int(  m*(sx-self.cx) ) + self.cy
+				sx = -int( radius / math.sqrt(1+math.pow(m,2)) ) + cx
+				sy = int(  m*(sx-cx) ) + cy
 
-		return [(self.cx, self.cy),(sx, sy)]
+		#print(angle, [(cx, cy),(sx, sy)])
+
+		return [(cx, cy),(sx, sy)]
 
