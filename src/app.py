@@ -25,6 +25,7 @@ class Application:
 		self.config={"contrast": 0,  "rotation": 0}
 		self.sc=0
 		self.data=0
+		self.data_old=0
 		self.ispic=False
 		self.neoPins=[15]
 		self.inPins = {}
@@ -114,17 +115,17 @@ class Application:
 		time.sleep(self.timesleep)
 
 	def recvData(self):
-		data=self.__recv()
+		self.data=int(self.__recv())
 		self.__send(b'')
 		time.sleep(self.timesleep)
 		buttons={}
 		for pin in self.inPins:
-			if(data & 1<<self.inPins[pin]["number"]):
+			if(self.data & 1<<self.inPins[pin]["number"]):
 				buttons[pin]=1
 			else:
 				buttons[pin]=0
 		print(buttons)
-		return data
+		return self.data
 
 	def sendImg_and_recvData(self):
 		if (self.config["rotation"]):
@@ -140,7 +141,7 @@ class Application:
 
 		pic=pic.convert('1')
 		pic=pic.tobytes()
-		data=self.__recv()
+		self.data=int(self.__recv())
 		buttons={}
 		#time.sleep(self.timesleep)
 		if(self.heigth and self.width):
@@ -150,13 +151,13 @@ class Application:
 
 		time.sleep(self.timesleep)
 		for pin in self.inPins:
-			if(data & 1<<self.inPins[pin]["number"]):
+			if(self.data & 1<<self.inPins[pin]["number"]):
 				buttons[pin]=1
 			else:
 				buttons[pin]=0
 		print(buttons)
 
-		return data
+		return self.data
 
 	def sendImg(self):
 		if(self.heigth and self.width):
@@ -176,6 +177,20 @@ class Application:
 			self.__recv()
 			self.__send(pic)
 			time.sleep(self.timesleep)
+	
+	def isPinUp(self, btn_name):
+		#print(self.data_old, self.data)
+		flag = False
+		if(self.data_old!=self.data) and (self.data & 1<<self.inPins[btn_name]["number"]):
+			flag=True
+		return flag
+	
+	def storeData(self):
+		if(self.data!=self.data_old):
+			self.data_old = self.data
+	
+	def resetData(self):
+		self.data_old = 0
 
 	def setText(self,pos,txt, txt_color, txt_font):
 		self.d.text(pos, txt, txt_color,font=txt_font)
