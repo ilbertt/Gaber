@@ -6,7 +6,7 @@ import sys
 
 class Application:
 
-	def __init__(self, adress, port, username):
+	def __init__(self, adress, port, username, timesleep):
 		self.heigth=0
 		self.width=0
 		self.username = username
@@ -20,6 +20,7 @@ class Application:
 		self.so.bind(self.addr)
 		self.so.listen(1)
 		self.so.settimeout(120)
+		self.timesleep=timesleep
 		self.confpath=""
 		self.config={"contrast": 0,  "rotation": 0}
 		self.sc=0
@@ -40,7 +41,7 @@ class Application:
 		except:
 			sys.exit()
 		
-		self.sc.settimeout(0.05)
+		self.sc.settimeout(self.timesleep)
 		try:
 			self.data=int(self.sc.recv(1024))
 		except:
@@ -81,19 +82,19 @@ class Application:
 	def setOutPin(self, pin, value):
 		self.__recv()
 		self.__send(str(pin*10+int(not value)).encode())
-		time.sleep(0.05)
+		time.sleep(self.timesleep)
 
 	def setInPin(self, pin):
 		self.__recv()
 		self.__send(str(pin).encode())
-		time.sleep(0.05)
+		time.sleep(self.timesleep)
 
 	def setDisplqy(self, sda, scl, heigth, width):
 		self.heigth = heigth
 		self.width = width
 		self.__recv()
 		self.__send((str(sda).zfill(2)+str(scl).zfill(2)+str(heigth).zfill(3)+str(width).zfill(3)).encode())
-		time.sleep(0.05)
+		time.sleep(self.timesleep)
 		
 	def setNeopixel(self, status, pin=-1):
 		if(len(self.neoPins)):
@@ -105,17 +106,17 @@ class Application:
 			else:
 				self.__send(b'')
 
-			time.sleep(0.05)
+			time.sleep(self.timesleep)
 
 	def setPwm(self, pin, freq, duty):
 		self.__recv()
 		self.__send((str(pin).zfill(2)+str(freq).zfill(3)+str(duty).zfill(4)).encode())
-		time.sleep(0.05)
+		time.sleep(self.timesleep)
 
 	def recvData(self):
 		data=self.__recv()
 		self.__send(b'')
-		time.sleep(0.05)
+		time.sleep(self.timesleep)
 		buttons={}
 		for pin in self.inPins:
 			if(data & 1<<self.inPins[pin]["number"]):
@@ -141,13 +142,13 @@ class Application:
 		pic=pic.tobytes()
 		data=self.__recv()
 		buttons={}
-		#time.sleep(0.05)
+		#time.sleep(self.timesleep)
 		if(self.heigth and self.width):
 			self.__send(pic)
 		else:
 			self.__send(b'')
 
-		time.sleep(0.05)
+		time.sleep(self.timesleep)
 		for pin in self.inPins:
 			if(data & 1<<self.inPins[pin]["number"]):
 				buttons[pin]=1
@@ -174,7 +175,7 @@ class Application:
 			pic=pic.tobytes()
 			self.__recv()
 			self.__send(pic)
-			time.sleep(0.05)
+			time.sleep(self.timesleep)
 
 	def setText(self,pos,txt, txt_color, txt_font):
 		self.d.text(pos, txt, txt_color,font=txt_font)

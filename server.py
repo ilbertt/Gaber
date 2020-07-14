@@ -4,11 +4,11 @@ import json
 import binascii
 from src.app import Application
 
-freeports=[1235,1236,1237, 1238]
+freeports=[50501,50502,50503,50504]
 occports=[]
 threads=[]
 adress="192.168.0.107"
-serv_port=1234
+serv_port=50500
 path="users.json"
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -36,10 +36,10 @@ while(1):
 	rf=open(path, "r")
 	dic=json.load(rf)
 	username=dic[mac]
-	print(username)
+	print(port,username)
 	rf.close()
 	MyClass = getattr(importlib.import_module(username+".main"), "Main")
-	app=Application(adress, port, username)
+	app=Application(adress, port, username, 0.05)
 	user=MyClass(app)
 	threads.append(user)
 	user.start()
