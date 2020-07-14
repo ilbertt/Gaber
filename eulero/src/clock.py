@@ -40,7 +40,7 @@ class Clock:
 					self.app.d.line(shape, fill="white", width = 1)
 
 					#hours
-					hour = hour if (hour<=12) else (hour-12)
+					hour = hour if (hour<12) else (hour-12)
 					shape = self.needleShape(int((hour/12)*60), self.r - 10)
 					self.app.d.line(shape, fill="white", width = 1)
 				elif(clock_type=="digital"):
