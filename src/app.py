@@ -65,7 +65,7 @@ class Application:
 			if(tmp["display"]):
 				self.heigth=tmp["display"]["heigth"]
 				self.width=tmp["display"]["width"]
-				self.setDisplqy(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width)
+				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width)
 
 
 	def getConfig(self, path):
@@ -74,6 +74,7 @@ class Application:
 			self.config=json.load(rf)
 
 	def setInPins(self):
+		print("configuring pins...")
 		for pin in self.inPins:
 			self.setInPin(self.inPins[pin]['number'])
 
@@ -90,7 +91,8 @@ class Application:
 		self.__send(str(pin).encode())
 		time.sleep(self.timesleep)
 
-	def setDisplqy(self, sda, scl, heigth, width):
+	def setDisplay(self, sda, scl, heigth, width):
+		print("configuring display...")
 		self.heigth = heigth
 		self.width = width
 		self.__recv()
