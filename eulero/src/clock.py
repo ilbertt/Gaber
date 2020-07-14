@@ -41,7 +41,8 @@ class Clock:
 					self.app.d.line(shape, fill="white", width = 1)
 
 					#hours
-					shape = self.needleShape(int(((hour-12)/12)*60), self.r - 10)
+					hour = hour if (hour<=12) else (hour-12)
+					shape = self.needleShape(int((hour/12)*60), self.r - 10)
 					self.app.d.line(shape, fill="white", width = 1)
 				elif(clock_type=="digital"):
 					self.app.setText((5,16),str(t.tm_hour).zfill(2)+":"+str(t.tm_min).zfill(2)+":"+str(sec).zfill(2), 255,self.app.getFonts()[1])
