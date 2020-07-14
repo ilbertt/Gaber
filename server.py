@@ -38,13 +38,15 @@ while(1):
 	rf.close()
 
 	port = 0
-	if username in threadAssign:
+	if username in threadAssign and threadAssign[username]["thread"].isAlive():
 		port = threadAssign[username]["port"]
 		so.send(str(port).encode())
 		so.close()
 
 		threadAssign[username]["thread"].sendPinConfig()
 	else:
+		if username in threadAssign:
+			threadAssign.pop(username)
 		port=freeports[0]
 		freeports.pop(0)
 		occports.append(port)
