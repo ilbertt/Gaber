@@ -1,4 +1,4 @@
-import time
+import datetime
 import math
 
 class Clock:
@@ -18,10 +18,12 @@ class Clock:
 		clock_type = "analogic"
 		old_clock_type = ""
 		while(1):
-			t=time.localtime()
-			sec=t.tm_sec
-			min=t.tm_min
-			hour=t.tm_hour
+			now = datetime.datetime.now()
+			hour = now.hour
+			min = now.minute
+			sec = now.second
+
+			date = now.strftime("%a, %b %d %Y")
 
 			if(sec!=sec_old or clock_type != old_clock_type):
 				sec_old=sec
@@ -44,7 +46,8 @@ class Clock:
 					shape = self.needleShape(int((hour/12)*60), self.r - 10)
 					self.app.d.line(shape, fill="white", width = 1)
 				elif(clock_type=="digital"):
-					self.app.setText((5,16),str(t.tm_hour).zfill(2)+":"+str(t.tm_min).zfill(2)+":"+str(sec).zfill(2), 255,self.app.getFonts()[1])
+					self.app.setText((5,7),str(hour).zfill(2)+":"+str(min).zfill(2)+":"+str(sec).zfill(2), 255,self.app.getFonts()[1])
+					self.app.setText((20,42), date, 255, self.app.getFonts()[0])
 				
 				self.app.sendImg_and_recvData()
 
