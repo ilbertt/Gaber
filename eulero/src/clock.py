@@ -31,7 +31,7 @@ class Clock:
 
 				if(clock_type=="analogic"):
 
-					self.app.d.ellipse(bounding_box, fill = 0, outline="white", width=2)
+					self.app.d.ellipse(bounding_box, fill = 0, outline="white")
 
 					#seconds
 					shape = self.needleShape(sec, self.r - 1)
