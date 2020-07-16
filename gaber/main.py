@@ -18,15 +18,18 @@ class Main(threading.Thread):
         pic=Image.open('gaber/src/images/pic.png')
         self.app.setImg(pic)
         self.app.sendImg()
-        time.sleep(4)
+        for _ in range(100):
+            self.app.recvData()
+
         self.app.newImg()
         self.app.setText((10,0),"GBROS", 255,self.app.getFonts()[1])
         self.app.setText((32,32),"V 0.1", 255,self.app.getFonts()[1])
         self.app.sendImg()
-        time.sleep(2)
+        for _ in range(100):
+            self.app.recvData()
+
         applications=[["CLOCK", Clock(self.app)],["TORCH", Torch(self.app)],["WEATHER", Weather(self.app)],["SETTINGS",Settings(self.app)]]
         menu=Menu(self.app, applications)
         applications[0][1].run(menu)
 
-    def sendPinConfig(self):
-        self.app.getPinConfig("eulero/src/config/pinout.json")
+

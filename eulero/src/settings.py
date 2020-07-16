@@ -6,6 +6,7 @@ class Settings:
 
 	def run(self, menu):
 		change=True
+		data_old=0
 		next_app=False
 		i=0
 		while(1):
@@ -17,26 +18,29 @@ class Settings:
 				self.app.setText((10,20),"ROTATION ", 255,self.app.getFonts()[0])
 				self.app.setText((10,30),"MENU ", 255,self.app.getFonts()[0])
 				self.app.setText((1,10+i*10),">", 255,self.app.getFonts()[0])
-				self.app.sendImg_and_recvData()
+				data=int(self.app.sendImg_and_recvData())
 			else:
-				self.app.recvData()
+				data=int(self.app.recvData())
 
 			#print(data)	
-			if (self.app.isPinUp("DOWN")):
+			if (data!=data_old and data==2**self.app.inPins['UP']['number']):
+				data_old=data
 				if(i==2):
 					i=0
 				else:
 					i+=1
 
 				change=True
-			elif (self.app.isPinUp("UP")):
+			elif (data!=data_old and data==2**self.app.inPins['DOWN']['number']):
+				data_old=data
 				if(i==0):
 					i=2
 				else:
 					i-=1
 
 				change=True
-			elif(self.app.isPinUp("SELECT")):
+			elif(data!=data_old and data==2**self.app.inPins['SELECT']['number']):
+				data_old=data
 				if(i==2):
 					i_tmp=i
 					next_app=True
@@ -48,11 +52,12 @@ class Settings:
 					self.contrast = not self.contrast
 					self.app.setContrast(self.contrast)
 					change=True
-			
-			self.app.storeData()
 
-			if (next_app):
+			if (next_app and data==0):
 				next_app=False
 				menu.run()
+
+			if (data!=data_old):
+				data_old=data
 
 

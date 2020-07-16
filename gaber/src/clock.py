@@ -5,6 +5,7 @@ class Clock:
 
 	def run(self, menu):
 		sec_old=-1
+		datas_old=0
 		next_app=False
 		while(1):
 			t=time.localtime()
@@ -13,19 +14,21 @@ class Clock:
 				sec_old=sec
 				self.app.newImg()
 				self.app.setText((5,16),str(t.tm_hour).zfill(2)+":"+str(t.tm_min).zfill(2)+":"+str(sec).zfill(2), 255,self.app.getFonts()[1])
-				self.app.sendImg_and_recvData()
+				data=self.app.sendImg_and_recvData()
 			else:
-				self.app.recvData()
+				data=self.app.recvData()
 
 			#print(data)
-			if(self.app.isPinUp("SELECT")):
-				next_app=True
-			
-			self.app.storeData()
+			if(data['SELECT']!=datas_old):
 
-			if (next_app):
+				datas_old=data['SELECT']
+				if(datas_old):	
+					next_app=True
+
+			if (next_app and data['SELECT']==0):
 				next_app=False
 				print("menu")
 				menu.run()
+
 
 
