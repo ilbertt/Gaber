@@ -3,63 +3,67 @@ import importlib
 import json
 import binascii
 from src.app import Application
+#from src.device import Device
 
-freeports=[50501,50502,50503,50504]
-occports=[]
-threads=[]
 threadAssign = {}
 
-adress="192.168.0.107"
+users_path="users.json"
+devices_path="devices.json"
+
+users = {}
+devices = {}
+
+with open(users_path, "r") as rf:
+	users = json.load(rf)
+
+'''with open(devices_path, "r") as rf:
+	devices = json.load(rf)'''
+
+adress="192.168.1.10"
 serv_port=50500
-path="users.json"
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 sock.bind((adress, serv_port))
 sock.listen()
 
+print("SERVER STARTED")
 while(1):
-	print("started")
-	for thread in threads:
-		if(not thread.isAlive()):
-			uport=thread.app.adress[1]
-			threads.remove(thread)
-			occports.remove(uport)
-			freeports.append(uport)
 
 	so, adr=sock.accept()
-	print("connected")
+	print("-----\nNEW CONNECTION")
 	mac=so.recv(1024)
 	mac=binascii.hexlify(mac).decode()
+
+	username = ''
+	device = ''
+
+	if mac in users:
+		username=users[mac]
+		print("connecting USER:", username)
+	elif mac in devices:
+		device = devices[mac]
+		print("connecting DEVICE:", device)
 	
-	rf=open(path, "r")
-	dic=json.load(rf)
-	username=dic[mac]
-	print(username)
-	rf.close()
+	'''deviceList[Device(), Device()]
+
+	deviceList.append(Device())'''
 
 	port = 0
 	if username in threadAssign and threadAssign[username]["thread"].isAlive():
 		port = threadAssign[username]["port"]
-		so.send(str(port).encode())
-		so.close()
 
 		threadAssign[username]["thread"].sendPinConfig()
 	else:
 		if username in threadAssign:
 			threadAssign.pop(username)
-		port=freeports[0]
-		freeports.pop(0)
-		occports.append(port)
-		so.send(str(port).encode())
-		so.close()
 
 		UserMain = getattr(importlib.import_module(username+".main"), "Main")
-		app=Application(adress, port, username, 0.05)
+		app = Application(so, username)
 		user=UserMain(app)
-		threads.append(user)
 
 		threadAssign.__setitem__(username, {"thread": user, "port": port})
 		user.start()
-		
+
+	print("-----")
 	print(threadAssign)
 	print("Clients connected: ", len(threadAssign))
