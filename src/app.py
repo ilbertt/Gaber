@@ -18,11 +18,14 @@ class Application:
 		self.config={"contrast": 0,  "rotation": 0}
 		self.sc=sc
 		self.data=0
+		#self.dead=False
+		self.buttons={}
 		self.ispic=False
 		self.neoPins=[15]
 		self.inPins = {}
 		self.outPins = {}
 		self.pwmPins= {}
+		#self.path=""
 		self.dispList= {"sh1106":0, "ssd1306":1}
 		#self.sc, adr=self.so.accept()
 		self.sc.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)
@@ -30,6 +33,15 @@ class Application:
 	def __send(self,data):
 		self.sc.settimeout(10)
 		self.sc.send(data)
+		"""try:
+			self.sc.send(data)
+		except:
+			print("dead")
+			self.dead=True
+			while(self.dead):
+				time.sleep(0.01)
+			
+			self.getPinConfig(self.path)"""
 
 	def __recv(self):
 		self.sc.settimeout(0.05)
@@ -42,6 +54,7 @@ class Application:
 	
 	def getPinConfig(self, path):
 		with open(path, "r") as rf:
+			#self.path=path
 			tmp = json.load(rf)
 			self.inPins = tmp["in"]
 			self.outPins = tmp["out"]
@@ -57,6 +70,9 @@ class Application:
 				self.width=tmp["display"]["width"]
 				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width, tmp["display"]["type"])
 
+	"""def changeSocket(self, sc):
+		self.sc=sc
+		self.dead=False"""
 
 	def getConfig(self, path):
 		self.confpath=path
@@ -108,16 +124,15 @@ class Application:
 	def recvData(self):
 		data=self.__recv()
 		self.__send(b'')
-		#time.sleep(0.01)
-		buttons={}
 		for pin in self.inPins:
 			if(data & 1<<self.inPins[pin]["number"]):
-				buttons[pin]=1
+				self.buttons[pin]=1
 			else:
-				buttons[pin]=0
+				self.buttons[pin]=0
 
-		print(buttons)
-		return buttons
+		time.sleep(0.01)
+		print(self.buttons)
+		return self.buttons
 
 	def sendImg_and_recvData(self):
 		if (self.config["rotation"]):
@@ -133,8 +148,7 @@ class Application:
 
 		pic=pic.convert('1')
 		pic=pic.tobytes()
-		data=self.__recv()
-		buttons={}
+		self.data=self.__recv()
 		#time.sleep(0.05)
 		if(self.heigth and self.width):
 			self.__send(pic[:512])
@@ -144,15 +158,15 @@ class Application:
 		else:
 			self.__send(b'')
 
-		time.sleep(0.01)
 		for pin in self.inPins:
-			if(data & 1<<self.inPins[pin]["number"]):
-				buttons[pin]=1
+			if(self.data & 1<<self.inPins[pin]["number"]):
+				self.buttons[pin]=1
 			else:
-				buttons[pin]=0
+				self.buttons[pin]=0
 
-		print(buttons)
-		return buttons
+		time.sleep(0.01)
+		print(self.buttons)
+		return self.buttons
 
 	def sendImg(self):
 		if(self.heigth and self.width):
@@ -169,11 +183,13 @@ class Application:
 
 			pic=pic.convert('1')
 			pic=pic.tobytes()
-			self.__recv()
-			self.__send(pic[:512])
-			#time.sleep(0.01)
-			self.__recv()
-			self.__send(pic[512:])
+			if(not self.dead):
+				self.__recv()
+				self.__send(pic[:512])
+				#time.sleep(0.01)
+				self.__recv()
+				self.__send(pic[512:])
+				
 			time.sleep(0.01)
 
 	def setText(self,pos,txt, txt_color, txt_font):

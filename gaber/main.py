@@ -32,4 +32,9 @@ class Main(threading.Thread):
         menu=Menu(self.app, applications)
         applications[0][1].run(menu)
 
+    def resumeConnection(self, so):
+        self.app.changeSocket(so)
+        self.app.getPinConfig("gaber/src/config/pinout.json")
+        self.app.dead=False
+
 

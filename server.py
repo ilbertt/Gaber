@@ -19,7 +19,7 @@ with open(users_path, "r") as rf:
 '''with open(devices_path, "r") as rf:
 	devices = json.load(rf)'''
 
-adress="192.168.1.10"
+adress="192.168.1.14"
 serv_port=50500
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -42,6 +42,7 @@ while(1):
 		print("connecting USER:", username)
 	elif mac in devices:
 		device = devices[mac]
+		username=device
 		print("connecting DEVICE:", device)
 	
 	'''deviceList[Device(), Device()]
@@ -51,8 +52,12 @@ while(1):
 	port = 0
 	if username in threadAssign and threadAssign[username]["thread"].isAlive():
 		port = threadAssign[username]["port"]
-
-		threadAssign[username]["thread"].sendPinConfig()
+		threadAssign[username]["thread"]
+		#threadAssign[username]["thread"].resumeConnection(so)
+		UserMain = getattr(importlib.import_module(username+".main"), "Main")
+		app = Application(so, username)
+		user=UserMain(app)
+		user.start()
 	else:
 		if username in threadAssign:
 			threadAssign.pop(username)
