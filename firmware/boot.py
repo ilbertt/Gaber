@@ -9,4 +9,4 @@ import gc
 gc.collect()
 
 import wificonnect
-do_connect()
+wificonnect.do_connect()
