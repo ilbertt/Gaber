@@ -14,12 +14,6 @@ class Application:
 		self.img=Image.new("L",(self.heigth,self.width))
 		self.d=ImageDraw.Draw(self.img)
 		self.d.rectangle((0,0,self.heigth,self.width),fill=0)
-		"""self.addr=(adress, port)
-		self.so=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.so.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self.so.bind(self.addr)
-		self.so.listen(1)
-		self.so.settimeout(120)"""
 		self.confpath=""
 		self.config={"contrast": 0,  "rotation": 0}
 		self.sc=sc
@@ -29,6 +23,7 @@ class Application:
 		self.inPins = {}
 		self.outPins = {}
 		self.pwmPins= {}
+		self.dispList= {"sh1106":0, "ssd1306":1}
 		#self.sc, adr=self.so.accept()
 		self.sc.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)
 
@@ -60,7 +55,7 @@ class Application:
 			if(tmp["display"]):
 				self.heigth=tmp["display"]["heigth"]
 				self.width=tmp["display"]["width"]
-				self.setDisplqy(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width)
+				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width, self.tmp["display"]["type"])
 
 
 	def getConfig(self, path):
@@ -85,11 +80,12 @@ class Application:
 		self.__send(str(pin).encode())
 		time.sleep(0.01)
 
-	def setDisplqy(self, sda, scl, heigth, width):
+	def setDisplay(self, sda, scl, heigth, width, dispType):
 		self.heigth = heigth
 		self.width = width
+		disp=self.dispList[dispType]
 		self.__recv()
-		self.__send((str(sda).zfill(2)+str(scl).zfill(2)+str(heigth).zfill(3)+str(width).zfill(3)).encode())
+		self.__send((str(sda).zfill(2)+str(scl).zfill(2)+str(heigth).zfill(3)+str(width).zfill(3)+str(disp).zfill(2)).encode())
 		time.sleep(0.01)
 
 	def setPwm(self, pin, freq, duty):
