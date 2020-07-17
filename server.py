@@ -16,8 +16,8 @@ devices = {}
 with open(users_path, "r") as rf:
 	users = json.load(rf)
 
-'''with open(devices_path, "r") as rf:
-	devices = json.load(rf)'''
+with open(devices_path, "r") as rf:
+	devices = json.load(rf)
 
 adress="192.168.1.14"
 serv_port=50500
@@ -33,6 +33,7 @@ while(1):
 	print("-----\nNEW CONNECTION")
 	mac=so.recv(1024)
 	mac=binascii.hexlify(mac).decode()
+	print(mac)
 
 	username = ''
 	device = ''

@@ -88,12 +88,12 @@ class Application:
 
 	def setOutPin(self, pin, value):
 		self.__recv()
-		self.__send(str(pin*10+int(not value)).encode())
+		self.__send(str(pin*10+int(not value)).zfill(3).encode())
 		time.sleep(0.01)
 
 	def setInPin(self, pin):
 		self.__recv()
-		self.__send(str(pin).encode())
+		self.__send(str(pin).zfill(2).encode())
 		time.sleep(0.01)
 
 	def setDisplay(self, sda, scl, heigth, width, dispType):
