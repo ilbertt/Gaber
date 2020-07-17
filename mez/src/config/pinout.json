@@ -1,0 +1,30 @@
+{
+    "in":{
+        "UP": {
+            "number": 12
+        },
+        "DOWN": {
+            "number": 13
+        },
+        "SELECT": {
+            "number": 14
+        }
+    },
+    "out": {
+        "LED": {
+            "number": 16
+        }
+    },
+    "neopixel":{
+        "NEO1": {
+            "number":15
+        }
+    },
+    "display":{
+        "heigth":128,
+        "width":64,
+        "sda": 5,
+        "scl": 4,
+        "type": "sh1106"
+    }
+}
