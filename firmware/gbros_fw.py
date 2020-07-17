@@ -1,10 +1,10 @@
-from machine import Pin, I2C
+from machine import Pin, I2C, PWM
 import neopixel
-import sh1106
 import socket
 import framebuf
 import machine
 import time
+
 def run(so):
     pin_in=[]
     oled_width = 1
@@ -47,16 +47,6 @@ def run(so):
             if pin in pin_in:
                 pin_in.remove(pin)    
                     
-        elif(len(s)==10):
-            s=int(s)
-            oled_heigth=s%1000
-            s=int(s/1000)
-            oled_width=s%1000
-            s=int(s/1000)
-            scl=s%100
-            sda=int(s/100)
-            i2c = I2C(-1, scl=Pin(scl), sda=Pin(sda))
-            oled = sh1106.SH1106_I2C(oled_width, oled_heigth, i2c)
         elif(len(s)==11):
             s=int(s)
             val=[0,0,0]
@@ -68,6 +58,23 @@ def run(so):
             np = neopixel.NeoPixel(machine.Pin(int(s/1000)), 1)
             np[0]=val
             np.write()
+        elif(len(s)==12):
+            disp=s%100
+            s=int(s/100)
+            s=int(s)
+            oled_heigth=s%1000
+            s=int(s/1000)
+            oled_width=s%1000
+            s=int(s/1000)
+            scl=s%100
+            sda=int(s/100)
+            i2c = I2C(-1, scl=Pin(scl), sda=Pin(sda))
+            if(disp==0):
+                from sh1106 import SH1106_I2C
+                oled = SH1106_I2C(oled_width, oled_heigth, i2c)
+            elif(disp==1):
+                from ssd1306 import SSD1306_I2C
+                oled = SSD1306_I2C(oled_width, oled_heigth, i2c)
         
         if(len(d)==int(oled_heigth*oled_width)/16):
             disp= not disp
