@@ -1,4 +1,4 @@
-import time
+import datetime
 import math
 
 class Clock:
@@ -7,22 +7,23 @@ class Clock:
 
 	def run(self, menu):
 		sec_old=-1
-		data_old=0
 		next_app=False
 
 		self.cx = int(self.app.heigth/2)
 		self.cy = int(self.app.width/2)
 		self.r = self.cy
 
-		bounding_box = [(self.cx-self.r, self.cy-self.r),(self.cx+self.r, self.cy+self.r - 1)]
+		bounding_box = [(self.cx-self.r, self.cy-self.r),(self.cx+self.r, self.cy+self.r-1)]
 
 		clock_type = "analogic"
 		old_clock_type = ""
 		while(1):
-			t=time.localtime()
-			sec=t.tm_sec
-			min=t.tm_min
-			hour=t.tm_hour
+			now = datetime.datetime.now()
+			hour = now.hour
+			min = now.minute
+			sec = now.second
+
+			date = now.strftime("%a, %b %d %Y")
 
 			if(sec!=sec_old or clock_type != old_clock_type):
 				sec_old=sec
@@ -30,7 +31,7 @@ class Clock:
 
 				if(clock_type=="analogic"):
 
-					self.app.d.ellipse(bounding_box, fill = 0, outline="white", width=2)
+					self.app.d.ellipse(bounding_box, fill = 0, outline="white")
 
 					#seconds
 					shape = self.needleShape(sec, self.r - 1)
@@ -41,52 +42,56 @@ class Clock:
 					self.app.d.line(shape, fill="white", width = 1)
 
 					#hours
-					shape = self.needleShape(int(((hour-12)/12)*60), self.r - 10)
+					hour = hour if (hour<12) else (hour-12)
+					shape = self.needleShape(int((hour/12)*60), self.r - 10)
 					self.app.d.line(shape, fill="white", width = 1)
 				elif(clock_type=="digital"):
-					self.app.setText((5,16),str(t.tm_hour).zfill(2)+":"+str(t.tm_min).zfill(2)+":"+str(sec).zfill(2), 255,self.app.getFonts()[1])
+					self.app.setText((5,7),str(hour).zfill(2)+":"+str(min).zfill(2)+":"+str(sec).zfill(2), 255,self.app.getFonts()[1])
+					self.app.setText((20,42), date, 255, self.app.getFonts()[0])
 				
-				data=int(self.app.sendImg_and_recvData())
+				self.app.sendImg_and_recvData()
 
 				old_clock_type = clock_type
 			else:
-				data=int(self.app.recvData())
-
+				self.app.recvData()
+			
 			#print(data)
-			if(data!=data_old and data==2**self.app.inPins['SELECT']['number']):
+			if(self.app.isPinUp("SELECT")):
 				next_app=True
-			elif(data!=data_old and data==2**self.app.inPins['DOWN']['number']):
+			elif(self.app.isPinUp("DOWN")):
 				clock_type = "digital"
-			elif(data!=data_old and data==2**self.app.inPins['UP']['number']):
+			elif(self.app.isPinUp("UP")):
 				clock_type = "analogic"
 
-			if (next_app and data==0):
+			self.app.storeData()
+
+			if (next_app):
 				next_app=False
 				print("menu")
 				menu.run()
 
-			if (data!=data_old):
-				data_old=data
-
 	def needleShape(self, angle, radius):
     
-		sx = self.cx
-		sy = self.cy - radius + 2
+		cx = self.cx
+		cy = self.cy - 1
+		sx = cx
+		sy = cy - radius + 2
 
 		if angle == 30:
-			sx = self.cx
-			sy = self.cy + radius - 2
-			#print(angle, [(self.cx, self.cy),(sx, sy)])
+			sx = cx
+			sy = cy + radius - 2
 
 		if angle > 0:
 			rad = (angle/30) * math.pi - math.pi/2
 			m = math.tan( rad )
 			if angle < 30:
-				sx = int( radius / math.sqrt(1+math.pow(m,2)) ) + self.cx
-				sy = int(  m*(sx-self.cx) ) + self.cy
+				sx = int( radius / math.sqrt(1+math.pow(m,2)) ) + cx
+				sy = int(  m*(sx-cx) ) + cy
 			elif angle > 30:
-				sx = -int( radius / math.sqrt(1+math.pow(m,2)) ) + self.cx
-				sy = int(  m*(sx-self.cx) ) + self.cy
+				sx = -int( radius / math.sqrt(1+math.pow(m,2)) ) + cx
+				sy = int(  m*(sx-cx) ) + cy
 
-		return [(self.cx, self.cy),(sx, sy)]
+		#print(angle, [(cx, cy),(sx, sy)])
+
+		return [(cx, cy),(sx, sy)]
 
