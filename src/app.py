@@ -183,12 +183,11 @@ class Application:
 
 			pic=pic.convert('1')
 			pic=pic.tobytes()
-			if(not self.dead):
-				self.__recv()
-				self.__send(pic[:512])
-				#time.sleep(0.01)
-				self.__recv()
-				self.__send(pic[512:])
+			self.__recv()
+			self.__send(pic[:512])
+			#time.sleep(0.01)
+			self.__recv()
+			self.__send(pic[512:])
 				
 			time.sleep(0.01)
 
