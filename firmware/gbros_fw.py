@@ -4,6 +4,8 @@ import socket
 import framebuf
 import machine
 import time
+from ssd1306 import SSD1306_I2C
+from sh1106 import SH1106_I2C
 
 def run(so):
     pin_in=[]
@@ -59,8 +61,10 @@ def run(so):
             np[0]=val
             np.write()
         elif(len(s)==12):
-            disp=s%100
-            s=int(s/100)
+            s=s.decode()
+            print(s)
+            disp=int(s[-2:])
+            s=s[:-2]
             s=int(s)
             oled_heigth=s%1000
             s=int(s/1000)
@@ -69,11 +73,11 @@ def run(so):
             scl=s%100
             sda=int(s/100)
             i2c = I2C(-1, scl=Pin(scl), sda=Pin(sda))
+            print(disp, oled_heigth, oled_width, sda, scl)
+
             if(disp==0):
-                from sh1106 import SH1106_I2C
                 oled = SH1106_I2C(oled_width, oled_heigth, i2c)
             elif(disp==1):
-                from ssd1306 import SSD1306_I2C
                 oled = SSD1306_I2C(oled_width, oled_heigth, i2c)
         
         if(len(d)==int(oled_heigth*oled_width)/16):
@@ -95,6 +99,7 @@ def run(so):
     #so.close()
 
     
+
 
 
 

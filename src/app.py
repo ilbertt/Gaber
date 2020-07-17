@@ -55,7 +55,7 @@ class Application:
 			if(tmp["display"]):
 				self.heigth=tmp["display"]["heigth"]
 				self.width=tmp["display"]["width"]
-				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width, self.tmp["display"]["type"])
+				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width, tmp["display"]["type"])
 
 
 	def getConfig(self, path):
