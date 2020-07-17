@@ -12,6 +12,9 @@ class Weather:
 
 	def run(self, menu):
 		show=True
+		datau_old=0
+		datad_old=0
+		datas_old=0
 		next_app=False
 		while(1):
 			t=time.localtime()
@@ -31,32 +34,39 @@ class Weather:
 					self.app.setText((40,0), "HUMIDITY ", 255,self.app.getFonts()[0])
 					self.app.setText((32,21),str(int(hum))+" %", 255,self.app.getFonts()[1])
 
-				self.app.sendImg_and_recvData()
+				data=self.app.sendImg_and_recvData()
 				show=False
 			else:
-				self.app.recvData()
+				data=self.app.recvData()
 
 			#print(data)
-			if(self.app.isPinUp("SELECT")):
-				next_app=True
-
-			if (self.app.isPinUp("DOWN")):
-				show=True
-				if(self.i==1):
-					self.i=0
-				else:
-					self.i+=1
-
-			elif (self.app.isPinUp("UP")):
-				show=True
-				if(self.i==0):
-					self.i=1
-				else:
-					self.i-=1
-
-			self.app.storeData()
 			
-			if (next_app):
+
+			if (data['UP']!=datau_old):
+				datau_old=data['UP']
+				if(datau_old):
+					show=True
+					if(self.i==1):
+						self.i=0
+					else:
+						self.i+=1
+
+			elif (data['DOWN']!=datad_old):
+				datad_old=data['DOWN']
+				if(datad_old):
+					show=True
+					if(self.i==0):
+						self.i=1
+					else:
+						self.i-=1
+
+			elif(data['SELECT']!=datas_old):
+				datas_old=data['SELECT']
+				if(datas_old):
+					next_app=True
+			
+			if (next_app and data['SELECT']==0):
 				next_app=False
 				print("menu")
 				menu.run()
+

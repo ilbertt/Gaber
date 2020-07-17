@@ -6,6 +6,9 @@ class Settings:
 
 	def run(self, menu):
 		change=True
+		datau_old=0
+		datad_old=0
+		datas_old=0
 		next_app=False
 		i=0
 		while(1):
@@ -17,42 +20,48 @@ class Settings:
 				self.app.setText((10,20),"ROTATION ", 255,self.app.getFonts()[0])
 				self.app.setText((10,30),"MENU ", 255,self.app.getFonts()[0])
 				self.app.setText((1,10+i*10),">", 255,self.app.getFonts()[0])
-				self.app.sendImg_and_recvData()
+				data=self.app.sendImg_and_recvData()
 			else:
-				self.app.recvData()
+				data=self.app.recvData()
 
 			#print(data)	
-			if (self.app.isPinUp("DOWN")):
-				if(i==2):
-					i=0
-				else:
-					i+=1
+			if (data['UP']!=datau_old):
+				datau_old=data['UP']
+				if(datau_old):
+					if(i==2):
+						i=0
+					else:
+						i+=1
 
 				change=True
-			elif (self.app.isPinUp("UP")):
-				if(i==0):
-					i=2
-				else:
-					i-=1
+			elif (data['DOWN']!=datad_old):
+				datad_old=data['DOWN']
+				if(datad_old):
+					if(i==0):
+						i=2
+					else:
+						i-=1
 
-				change=True
-			elif(self.app.isPinUp("SELECT")):
-				if(i==2):
-					i_tmp=i
-					next_app=True
-				elif(i==1):
-					self.rotation = not self.rotation
-					self.app.setRotation(self.rotation)
 					change=True
-				elif(i==0):
-					self.contrast = not self.contrast
-					self.app.setContrast(self.contrast)
-					change=True
-			
-			self.app.storeData()
 
-			if (next_app):
+			elif(data['SELECT']!=datas_old):
+				datas_old=data['SELECT']
+				if(datas_old):
+					if(i==2):
+						i_tmp=i
+						next_app=True
+					elif(i==1):
+						self.rotation = not self.rotation
+						self.app.setRotation(self.rotation)
+						change=True
+					elif(i==0):
+						self.contrast = not self.contrast
+						self.app.setContrast(self.contrast)
+						change=True
+
+			if (next_app and data['SELECT']==0):
 				next_app=False
 				menu.run()
+
 
 

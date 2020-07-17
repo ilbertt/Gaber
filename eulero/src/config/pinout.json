@@ -24,6 +24,7 @@
         "heigth":128,
         "width":64,
         "sda": 5,
-        "scl": 4
+        "scl": 4,
+        "type": "sh1106"
     }
 }

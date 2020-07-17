@@ -8,6 +8,9 @@ class Clock:
 	def run(self, menu):
 		sec_old=-1
 		next_app=False
+		datas_old=0
+		datau_old=0
+		datad_old=0
 
 		self.cx = int(self.app.heigth/2)
 		self.cy = int(self.app.width/2)
@@ -17,6 +20,7 @@ class Clock:
 
 		clock_type = "analogic"
 		old_clock_type = ""
+
 		while(1):
 			now = datetime.datetime.now()
 			hour = now.hour
@@ -27,6 +31,7 @@ class Clock:
 
 			if(sec!=sec_old or clock_type != old_clock_type):
 				sec_old=sec
+				old_clock_type=clock_type
 				self.app.newImg()
 
 				if(clock_type=="analogic"):
@@ -48,24 +53,28 @@ class Clock:
 				elif(clock_type=="digital"):
 					self.app.setText((5,7),str(hour).zfill(2)+":"+str(min).zfill(2)+":"+str(sec).zfill(2), 255,self.app.getFonts()[1])
 					self.app.setText((20,42), date, 255, self.app.getFonts()[0])
-				
-				self.app.sendImg_and_recvData()
-
-				old_clock_type = clock_type
+				data=self.app.sendImg_and_recvData()
 			else:
-				self.app.recvData()
-			
+				data=self.app.recvData()
+
 			#print(data)
-			if(self.app.isPinUp("SELECT")):
-				next_app=True
-			elif(self.app.isPinUp("DOWN")):
-				clock_type = "digital"
-			elif(self.app.isPinUp("UP")):
-				clock_type = "analogic"
+			if(data['SELECT']!=datas_old):
 
-			self.app.storeData()
+				datas_old=data['SELECT']
+				if(datas_old):	
+					next_app=True
+			elif(data['DOWN']!=datad_old):
 
-			if (next_app):
+				datad_old=data['DOWN']
+				if(datad_old):	
+					clock_type = "digital"
+			elif(data['UP']!=datau_old):
+
+				datau_old=data['UP']
+				if(datau_old):	
+					clock_type = "analogic"
+
+			if (next_app and data['SELECT']==0):
 				next_app=False
 				print("menu")
 				menu.run()

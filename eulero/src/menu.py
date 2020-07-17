@@ -12,6 +12,10 @@ class Menu:
 		n=int(width/10)-1
 		pages=int(numpy.ceil(len(self.applications)/n))
 		changed=True
+		data=3
+		datau_old=0
+		datad_old=0
+		datas_old=0
 		next_app=False
 		i_tmp=0
 		page=1
@@ -26,35 +30,41 @@ class Menu:
 						self.app.setText((10,10+(x+1)*10),self.applications[(page-1)*n+x+1][0], 255,self.app.getFonts()[0])
 				
 
-				self.app.sendImg_and_recvData()
+				data=self.app.sendImg_and_recvData()
 				changed=False
 			else:
-				self.app.recvData()
+				data=self.app.recvData()
 
-			#print(data)	
-			if (self.app.isPinUp("DOWN")):
-				if(self.i==len(self.applications)-1):
-					self.i=0
-				else:
-					self.i+=1
-
-				page=int(self.i/n)+1
-				changed=True
-			elif (self.app.isPinUp("UP")):
-				if(self.i==0):
-					self.i=len(self.applications)-1
-				else:
-					self.i-=1
+			print(data)	
+			if (data['UP']!=datau_old):
+				datau_old=data['UP']
+				if(datau_old):
+					if(self.i==len(self.applications)-1):
+						self.i=0
+					else:
+						self.i+=1
 
 				page=int(self.i/n)+1
 				changed=True
-			elif(self.app.isPinUp("SELECT")):
-				i_tmp=self.i
-				next_app=True
+			elif (data['DOWN']!=datad_old):
+				datad_old=data['DOWN']
+				if(datad_old):
+					if(self.i==0):
+						self.i=len(self.applications)-1
+					else:
+						self.i-=1
+
+					page=int(self.i/n)+1
+					changed=True
+
+			elif(data['SELECT']!=datas_old):
+				datas_old=data['SELECT']
+				if(datas_old):
+					i_tmp=self.i
+					next_app=True
 			
-			self.app.storeData()
-
-			if (next_app):
+			if (next_app and data['SELECT']==0):
 				next_app=False
 				print(self.applications[i_tmp][0])
 				self.applications[i_tmp][1].run(self)
+
