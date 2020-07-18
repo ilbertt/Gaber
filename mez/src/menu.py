@@ -35,7 +35,7 @@ class Menu:
 			else:
 				data=self.app.recvData()
 
-			print(data)	
+			#print(data)	
 			if (data['UP']!=datau_old):
 				datau_old=data['UP']
 				if(datau_old):
@@ -66,6 +66,6 @@ class Menu:
 			
 			if (next_app and data['SELECT']==0):
 				next_app=False
-				print(self.applications[i_tmp][0])
+				#print(self.applications[i_tmp][0])
 				self.applications[i_tmp][1].run(self)
 

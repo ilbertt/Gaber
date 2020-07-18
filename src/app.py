@@ -18,7 +18,7 @@ class Application:
 		self.img=Image.new("L",(self.heigth,self.width))
 		self.d=ImageDraw.Draw(self.img)
 		self.d.rectangle((0,0,self.heigth,self.width),fill=0)
-		self.confpath=""
+		self.confpath=0
 		self.config={"contrast": 0,  "rotation": 0}
 		self.sc=sc
 		self.data=0
@@ -138,7 +138,7 @@ class Application:
 				self.buttons[pin]=0
 
 		time.sleep(0.01)
-		print(self.buttons)
+		#print(self.buttons)
 		return self.buttons
 
 	def sendImg_and_recvData(self):
@@ -172,7 +172,7 @@ class Application:
 				self.buttons[pin]=0
 
 		time.sleep(0.01)
-		print(self.buttons)
+		#print(self.buttons)
 		return self.buttons
 
 	def sendImg(self):
@@ -203,13 +203,15 @@ class Application:
 
 	def setContrast(self, contrast):
 		self.config["contrast"]=contrast
-		with open(self.confpath, "w") as rf:
-			json.dump(self.config, rf)
+		if(self.confpath):
+			with open(self.confpath, "w") as rf:
+				json.dump(self.config, rf)
 
 	def setRotation(self, rotation):
 		self.config["rotation"]=rotation
-		with open(self.confpath, "w") as rf:
-			json.dump(self.config, rf)
+		if(self.confpath):
+			with open(self.confpath, "w") as rf:
+				json.dump(self.config, rf)
 
 	def getFonts(self):
 		return self.fonts
