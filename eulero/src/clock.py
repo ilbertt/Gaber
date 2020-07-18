@@ -76,7 +76,7 @@ class Clock:
 
 			if (next_app and data['SELECT']==0):
 				next_app=False
-				print("menu")
+				#print("menu")
 				menu.run()
 
 	def needleShape(self, angle, radius):

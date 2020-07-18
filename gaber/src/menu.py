@@ -65,6 +65,6 @@ class Menu:
 			
 			if (next_app and data['SELECT']==0):
 				next_app=False
-				print(self.applications[i_tmp][0])
+				#print(self.applications[i_tmp][0])
 				self.applications[i_tmp][1].run(self)
 
