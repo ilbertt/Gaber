@@ -39,20 +39,21 @@ class Menu:
 			if (data['UP']!=datau_old):
 				datau_old=data['UP']
 				if(datau_old):
-					if(self.i==len(self.applications)-1):
-						self.i=0
-					else:
-						self.i+=1
-
-				page=int(self.i/n)+1
-				changed=True
-			elif (data['DOWN']!=datad_old):
-				datad_old=data['DOWN']
-				if(datad_old):
 					if(self.i==0):
 						self.i=len(self.applications)-1
 					else:
 						self.i-=1
+
+					page=int(self.i/n)+1
+					changed=True
+					
+			elif (data['DOWN']!=datad_old):
+				datad_old=data['DOWN']
+				if(datad_old):
+					if(self.i==len(self.applications)-1):
+						self.i=0
+					else:
+						self.i+=1
 
 					page=int(self.i/n)+1
 					changed=True
