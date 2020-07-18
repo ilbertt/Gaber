@@ -134,7 +134,7 @@ class Application:
 				self.buttons[pin]=0
 
 		time.sleep(0.01)
-		print(self.buttons)
+		#print(self.buttons)
 		return self.buttons
 
 	def sendImg_and_recvData(self):
@@ -168,7 +168,7 @@ class Application:
 				self.buttons[pin]=0
 
 		time.sleep(0.01)
-		print(self.buttons)
+		#print(self.buttons)
 		return self.buttons
 
 	def sendImg(self):
