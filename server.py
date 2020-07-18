@@ -68,5 +68,5 @@ while(1):
 		devicesList.append(dev)
 
 	print("-----")
-	print(threadAssign)
-	print("Clients connected: ", len(threadAssign))
+	#print(threadAssign)
+	#print("Clients connected: ", len(threadAssign))
