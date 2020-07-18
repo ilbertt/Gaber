@@ -1,29 +1,15 @@
-# README #		 DSTIKE watch remote OS
+DSTIKE watch remote OS
 
-  This README would normally document whatever steps are necessary to get your application up and running.		
+  ### Requirements
+ 1. python packages:
+     ```
+     pip3 install -r requirements.txt
+     ```
 
-  ### What is this repository for? ###		
+  2. Arial font (take a look also [here](https://askubuntu.com/a/651442/)):
 
-  * Quick summary		
- * Version		
- * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)		
-
-  ### How do I get set up? ###		
-
-  * Summary of set up		
- * Configuration		
- * Dependencies		
- * Database configuration		
- * How to run tests		
- * Deployment instructions		
-
-  ### Contribution guidelines ###		
-
-  * Writing tests		
- * Code review		
- * Other guidelines		
-
-  ### Who do I talk to? ###		
-
-  * Repo owner or admin		
- * Other community or team contact
+      ```
+     sudo apt-get install ttf-mscorefonts-installer
+     sudo fc-cache
+     fc-match Arial
+     ```
