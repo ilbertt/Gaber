@@ -32,7 +32,10 @@ class Application:
 
 	def __send(self,data):
 		self.sc.settimeout(10)
-		self.sc.send(data)
+		try:
+			self.sc.send(data)
+		except:
+			pass
 		"""try:
 			self.sc.send(data)
 		except:
