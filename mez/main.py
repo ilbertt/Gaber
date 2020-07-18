@@ -1,8 +1,8 @@
-from eulero.src.menu  		import Menu
-from eulero.src.clock 		import Clock
-from eulero.src.torch 		import Torch
-from eulero.src.weather	    import Weather
-from eulero.src.settings 	import Settings
+from mez.src.menu  		import Menu
+from mez.src.clock 		import Clock
+from mez.src.torch 		import Torch
+from mez.src.weather	    import Weather
+from mez.src.settings 	import Settings
 from PIL   			import Image
 import time
 import threading
@@ -13,9 +13,9 @@ class Main(threading.Thread):
         threading.Thread.__init__(self)
     
     def run(self):
-        self.app.getPinConfig("eulero/src/config/pinout.json")
-        self.app.getConfig("eulero/src/config/config.json")
-        pic=Image.open('eulero/src/images/pic.png')
+        self.app.getPinConfig("mez/src/config/pinout.json")
+        self.app.getConfig("mez/src/config/config.json")
+        pic=Image.open('mez/src/images/pic.png')
         self.app.setImg(pic)
         self.app.sendImg()
         for _ in range(100):
@@ -34,7 +34,7 @@ class Main(threading.Thread):
 
     def resumeConnection(self, so):
         self.app.changeSocket(so)
-        self.app.getPinConfig("eulero/src/config/pinout.json")
+        self.app.getPinConfig("mez/src/config/pinout.json")
         self.app.dead=False
 
 
