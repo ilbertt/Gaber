@@ -232,14 +232,18 @@ class Application:
 		self.d.rectangle((0,0,self.heigth,self.width),fill=img_color)
 
 	def addAvailDevice(self, device):
-		print("adding", device)
 		if not (device in self.availableDevices):
 			self.availableDevices.append(device)
-
-		#print(self.availableDevices)
 	
 	def removeAvailDevice(self, device):
-		print("removing", device)
 		if device in self.availableDevices:
 			self.availableDevices.remove(device)
-		#print(self.availableDevices)
+	
+	def listAvailableDevices(self):
+		for device in self.devicesList:
+			if device.available:
+				self.addAvailDevice(device)
+			else:
+				self.removeAvailDevice(device)
+		
+		return self.availableDevices

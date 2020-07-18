@@ -12,9 +12,9 @@ class Stream:
         next_app=False
         devices = self.app.devicesList
 
-        #avail_devices = self.app.availableDevices
+        avail_devices = self.app.listAvailableDevices()
         #print(avail_devices)
-        avail_devices = []
+        #avail_devices = []
         old_avail_devices = 0
 
         while(1):
@@ -38,13 +38,7 @@ class Stream:
             else:
                 data=self.app.recvData()
             
-            for device in devices:
-                if device in avail_devices:
-                    if not device.available:
-                        avail_devices.remove(device)
-                else:
-                    if device.available:
-                        avail_devices.append(device)
+            avail_devices = self.app.listAvailableDevices()
             
             if (data['UP']!=datau_old):
                 datau_old=data['UP']
@@ -69,17 +63,19 @@ class Stream:
             elif(data['SELECT']!=datas_old):
                 datas_old=data['SELECT']
                 if(datas_old):
-                    print(i,j, last_i)
+                    #print(i,j, last_i)
                     if(i==last_i):
                         next_app=True
                     elif(i==1):
-                        '''self.ledstatus=not self.ledstatus
-                        self.app.setOutPin(16, self.ledstatus)'''
+                        '''
+                        TODO: stream on click
+                        '''
                     elif(i==0):
-                        '''self.npstatus= not self.npstatus
-                        self.app.setNeopixel([255*self.npstatus,255*self.npstatus,255*self.npstatus])'''
+                        '''
+                        TODO: stream on click
+                        '''
             
             if (next_app and data['SELECT']==0):
                 next_app=False
-                print("menu")
+                #print("menu")
                 menu.run()

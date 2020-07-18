@@ -35,10 +35,6 @@ class Device(threading.Thread):
                 datap_old=data['PROXIMITY']
                 if(datap_old):
                     self.available=not self.available
-                    if self.available:
-                        self.app.addAvailDevice(self)
-                    else:
-                        self.app.removeAvailDevice(self)
 
                 change=True
 
