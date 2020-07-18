@@ -3,6 +3,7 @@ from eulero.src.clock 		import Clock
 from eulero.src.torch 		import Torch
 from eulero.src.weather	    import Weather
 from eulero.src.settings 	import Settings
+from eulero.src.stream      import Stream
 from PIL   			import Image
 import time
 import threading
@@ -28,7 +29,7 @@ class Main(threading.Thread):
         for _ in range(100):
             self.app.recvData()
 
-        applications=[["CLOCK", Clock(self.app)],["TORCH", Torch(self.app)],["WEATHER", Weather(self.app)],["SETTINGS",Settings(self.app)]]
+        applications=[["CLOCK", Clock(self.app)],["STREAM", Stream(self.app)],["TORCH", Torch(self.app)],["WEATHER", Weather(self.app)],["SETTINGS",Settings(self.app)]]
         menu=Menu(self.app, applications)
         applications[0][1].run(menu)
 

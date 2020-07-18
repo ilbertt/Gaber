@@ -6,10 +6,14 @@ import sys
 
 class Application:
 
-	def __init__(self, sc, username):
+	def __init__(self, sc, username, devicesList=None):
 		self.heigth=0
 		self.width=0
 		self.username = username
+
+		self.devicesList = devicesList
+		self.availableDevices = []
+
 		self.fonts = [ImageFont.truetype("Arial.ttf",11),ImageFont.truetype("Arial.ttf",30)]
 		self.img=Image.new("L",(self.heigth,self.width))
 		self.d=ImageDraw.Draw(self.img)
@@ -224,3 +228,16 @@ class Application:
 
 	def fillImg(self, img_color):
 		self.d.rectangle((0,0,self.heigth,self.width),fill=img_color)
+
+	def addAvailDevice(self, device):
+		print("adding", device)
+		if not (device in self.availableDevices):
+			self.availableDevices.append(device)
+
+		#print(self.availableDevices)
+	
+	def removeAvailDevice(self, device):
+		print("removing", device)
+		if device in self.availableDevices:
+			self.availableDevices.remove(device)
+		#print(self.availableDevices)

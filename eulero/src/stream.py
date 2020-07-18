@@ -1,62 +1,85 @@
 class Stream:
     def __init__(self, app):
         self.app = app
-        self.screens = ["first", "second"]
     
     def run(self, menu):
         change=True
         i=0
         j=1
+        datau_old=0
+        datad_old=0
+        datas_old=0
         next_app=False
+        devices = self.app.devicesList
+
+        #avail_devices = self.app.availableDevices
+        #print(avail_devices)
+        avail_devices = []
+        old_avail_devices = 0
 
         while(1):
-            if (change):
+            if (change or old_avail_devices!=len(avail_devices)):
                 change=False
+                old_avail_devices = len(avail_devices)
                 self.app.newImg()
                 self.app.setText((45,0), "STREAM ", 255,self.app.getFonts()[0])
 
-                for screen in self.screens:
-                    self.app.setText((10,10*j),screen, 255,self.app.getFonts()[0])
-                    j=j+1
+                for device in devices:
+                    if device.available:
+                        self.app.setText((10,10*j),device.name, 255,self.app.getFonts()[0])
+                        j=j+1
 
                 self.app.setText((10,10*j),"MENU ", 255,self.app.getFonts()[0])
                 last_i = j-1
                 j=1
                 self.app.setText((1,10+i*10),">", 255,self.app.getFonts()[0])
                 
-                self.app.sendImg_and_recvData()
+                data=self.app.sendImg_and_recvData()
             else:
-                self.app.recvData()
-
-            #print(data)	
-            if (self.app.isPinUp("DOWN")):
-                if(i==last_i):
-                    i=0
+                data=self.app.recvData()
+            
+            for device in devices:
+                if device in avail_devices:
+                    if not device.available:
+                        avail_devices.remove(device)
                 else:
-                    i+=1
+                    if device.available:
+                        avail_devices.append(device)
+            
+            if (data['UP']!=datau_old):
+                datau_old=data['UP']
+                if(datau_old):
+                    if(i==0):
+                        i=last_i
+                    else:
+                        i-=1
 
-                change=True
-            elif (self.app.isPinUp("UP")):
-                if(i==0):
-                    i=last_i
-                else:
-                    i-=1
+                    change=True
 
-                change=True
-            elif(self.app.isPinUp("SELECT")):
-                print(i,j, last_i)
-                if(i==last_i):
-                    i_tmp=i
-                    next_app=True
-                elif(i==1):
-                    '''self.ledstatus=not self.ledstatus
-                    self.app.setOutPin(16, self.ledstatus)'''
-                elif(i==0):
-                    '''self.npstatus= not self.npstatus
-                    self.app.setNeopixel([255*self.npstatus,255*self.npstatus,255*self.npstatus])'''
+            elif (data['DOWN']!=datad_old):
+                datad_old=data['DOWN']
+                if(datad_old):
+                    if(i==last_i):
+                        i=0
+                    else:
+                        i+=1
 
-            self.app.storeData()
+                    change=True
 
-            if (next_app):
+            elif(data['SELECT']!=datas_old):
+                datas_old=data['SELECT']
+                if(datas_old):
+                    print(i,j, last_i)
+                    if(i==last_i):
+                        next_app=True
+                    elif(i==1):
+                        '''self.ledstatus=not self.ledstatus
+                        self.app.setOutPin(16, self.ledstatus)'''
+                    elif(i==0):
+                        '''self.npstatus= not self.npstatus
+                        self.app.setNeopixel([255*self.npstatus,255*self.npstatus,255*self.npstatus])'''
+            
+            if (next_app and data['SELECT']==0):
                 next_app=False
+                print("menu")
                 menu.run()

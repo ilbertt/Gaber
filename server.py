@@ -3,7 +3,7 @@ import importlib
 import json
 import binascii
 from src.app import Application
-#from src.device import Device
+from src.device import Device
 
 threadAssign = {}
 
@@ -12,6 +12,8 @@ devices_path="devices.json"
 
 users = {}
 devices = {}
+
+devicesList = []
 
 with open(users_path, "r") as rf:
 	users = json.load(rf)
@@ -41,34 +43,29 @@ while(1):
 	if mac in users:
 		username=users[mac]
 		print("connecting USER:", username)
+
+		if username in threadAssign and threadAssign[username]["thread"].isAlive():
+			threadAssign[username]["thread"]
+			#threadAssign[username]["thread"].resumeConnection(so)
+		else:
+			if username in threadAssign:
+				threadAssign.pop(username)
+
+		UserMain = getattr(importlib.import_module(username+".main"), "Main")
+		app = Application(so, username, devicesList)
+		user=UserMain(app)
+
+		threadAssign.__setitem__(username, {"thread": user})
+		user.start()
+
 	elif mac in devices:
 		device = devices[mac]
-		username=device
+		deviceApp = Application(so, device)
 		print("connecting DEVICE:", device)
-	
-	'''deviceList[Device(), Device()]
-
-	deviceList.append(Device())'''
-
-	port = 0
-	if username in threadAssign and threadAssign[username]["thread"].isAlive():
-		port = threadAssign[username]["port"]
-		threadAssign[username]["thread"]
-		#threadAssign[username]["thread"].resumeConnection(so)
-		UserMain = getattr(importlib.import_module(username+".main"), "Main")
-		app = Application(so, username)
-		user=UserMain(app)
-		user.start()
-	else:
-		if username in threadAssign:
-			threadAssign.pop(username)
-
-		UserMain = getattr(importlib.import_module(username+".main"), "Main")
-		app = Application(so, username)
-		user=UserMain(app)
-
-		threadAssign.__setitem__(username, {"thread": user, "port": port})
-		user.start()
+		dev = Device(deviceApp, device)
+		dev.start()
+		#dev.run()
+		devicesList.append(dev)
 
 	print("-----")
 	print(threadAssign)
