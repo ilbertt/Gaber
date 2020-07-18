@@ -35,7 +35,7 @@ class Menu:
 			else:
 				data=self.app.recvData()
 
-			print(data)	
+			#print(data)	
 			if (data['UP']!=datau_old):
 				datau_old=data['UP']
 				if(datau_old):
