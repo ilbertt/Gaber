@@ -10,6 +10,7 @@ import threading
 class Main(threading.Thread):
     def __init__(self, app):
         self.app=app
+        self.i=0
         threading.Thread.__init__(self)
     
     def run(self):
@@ -28,9 +29,14 @@ class Main(threading.Thread):
         for _ in range(100):
             self.app.recvData()
 
-        applications=[["CLOCK", Clock(self.app)],["TORCH", Torch(self.app)],["WEATHER", Weather(self.app)],["SETTINGS",Settings(self.app)]]
-        menu=Menu(self.app, applications)
-        applications[0][1].run(menu)
+        applications_name=["CLOCK","TORCH", "WEATHER", "SETTINGS"]
+        applications=[Clock(self.app), Torch(self.app), Weather(self.app),Settings(self.app)]
+        menu=Menu(self.app, applications_name)
+        while(1):
+            if(self.i==-1):
+                self.i=menu.run()
+            else:
+                self.i=applications[self.i].run()
 
     def resumeConnection(self, so):
         self.app.changeSocket(so)

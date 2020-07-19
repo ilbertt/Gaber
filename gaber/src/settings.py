@@ -4,14 +4,15 @@ class Settings:
 		self.contrast=0
 		self.rotation=0
 
-	def run(self, menu):
+	def run(self):
 		change=True
 		datau_old=0
 		datad_old=0
 		datas_old=0
 		next_app=False
 		i=0
-		while(1):
+		close_app=False
+		while(not close_app):
 			if (change):
 				change=False
 				self.app.newImg()
@@ -61,7 +62,8 @@ class Settings:
 
 			if (next_app and data['SELECT']==0):
 				next_app=False
-				menu.run()
+				close_app= True
 
+		return -1
 
 

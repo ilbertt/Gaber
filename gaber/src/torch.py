@@ -4,14 +4,15 @@ class Torch:
 		self.ledstatus=0;
 		self.npstatus=0;
 
-	def run(self, menu):
+	def run(self):
 		change=True
 		datau_old=0
 		datad_old=0
 		datas_old=0
 		i=0
 		next_app=False
-		while(1):
+		close_app=False
+		while(not close_app):
 			if (change):
 				change=False
 				self.app.newImg()
@@ -60,7 +61,8 @@ class Torch:
 
 			if (next_app and data['SELECT']==0):
 				next_app=False
-				menu.run()
+				close_app=True
 
+		return -1
 
 
