@@ -48,6 +48,7 @@ class Router:
     def streamOnDevice(self, dev):
         if dev.stream:
             dev.stream = False
+            self.streamingDevice = None
         else:
             dev.stream = True
             self.streamingDevice = dev
