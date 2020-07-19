@@ -2,8 +2,9 @@ import socket
 import importlib
 import json
 import binascii
-from src.app import Application
-from src.device import Device
+from src.app 		import Application
+from src.device 	import Device
+from src.router 	import Router
 
 threadAssign = {}
 
@@ -12,8 +13,6 @@ devices_path="devices.json"
 
 users = {}
 devices = {}
-
-devicesList = []
 
 with open(users_path, "r") as rf:
 	users = json.load(rf)
@@ -27,6 +26,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 sock.bind((adress, serv_port))
 sock.listen()
+
+router = Router()
 
 print("SERVER STARTED")
 while(1):
@@ -52,7 +53,7 @@ while(1):
 				threadAssign.pop(username)
 
 		UserMain = getattr(importlib.import_module(username+".main"), "Main")
-		app = Application(so, username, devicesList)
+		app = Application(so, username, router)
 		user=UserMain(app)
 
 		threadAssign.__setitem__(username, {"thread": user})
@@ -60,13 +61,16 @@ while(1):
 
 	elif mac in devices:
 		device = devices[mac]
-		deviceApp = Application(so, device)
+		deviceApp = Application(so, device, router)
 		print("connecting DEVICE:", device)
 		dev = Device(deviceApp, device)
 		dev.start()
-		#dev.run()
-		devicesList.append(dev)
+		threadAssign.__setitem__(device, {"thread": dev})
+		router.addDevice(dev)
 
 	print("-----")
+
+	'''for user in threadAssign:
+		print(threadAssign[user]["thread"].isAlive())'''
 	#print(threadAssign)
 	#print("Clients connected: ", len(threadAssign))

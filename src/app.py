@@ -6,33 +6,36 @@ import sys
 
 class Application:
 
-	def __init__(self, sc, username, devicesList=None):
+	def __init__(self, sc, username, router=None):
 		self.heigth=0
 		self.width=0
 		self.username = username
 
-		self.devicesList = devicesList
-		self.availableDevices = []
+		self.router = router
 
 		self.fonts = [ImageFont.truetype("Arial.ttf",11),ImageFont.truetype("Arial.ttf",30)]
 		self.img=Image.new("L",(self.heigth,self.width))
 		self.d=ImageDraw.Draw(self.img)
 		self.d.rectangle((0,0,self.heigth,self.width),fill=0)
+		
 		self.confpath=0
 		self.config={"contrast": 0,  "rotation": 0}
+
 		self.sc=sc
+		self.sc.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)
 		self.data=0
 		#self.dead=False
+		#self.path=""
 		self.buttons={}
+
 		self.ispic=False
+
 		self.neoPins=[15]
 		self.inPins = {}
 		self.outPins = {}
 		self.pwmPins= {}
-		#self.path=""
-		self.dispList= {"sh1106":0, "ssd1306":1}
-		#self.sc, adr=self.so.accept()
-		self.sc.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)
+		
+		self.dispList= {"sh1106":0, "ssd1306":1}	
 
 	def __send(self,data):
 		self.sc.settimeout(10)
@@ -227,34 +230,13 @@ class Application:
 		self.img=Image.new("L",(self.heigth,self.width))
 		self.d=ImageDraw.Draw(self.img)
 		self.d.rectangle((0,0,self.heigth,self.width),fill=0)
-
+	
 	def fillImg(self, img_color):
 		self.d.rectangle((0,0,self.heigth,self.width),fill=img_color)
 
-	def addAvailDevice(self, device):
-		if not (device in self.availableDevices):
-			self.availableDevices.append(device)
-	
-	def removeAvailDevice(self, device):
-		if device in self.availableDevices:
-			device.stream=False
-			self.availableDevices.remove(device)
-	
-	def listAvailableDevices(self):
-		for device in self.devicesList:
-			if device.available:
-				self.addAvailDevice(device)
-			else:
-				self.removeAvailDevice(device)
-		
-		return self.availableDevices
-	
-	def streamOnDevice(self, dev):
-		if dev.stream:
-			dev.stream = False
-		else:
-			dev.stream = True
-
-		for device in self.availableDevices:
-			if device != dev:
-				device.stream=False
+	def setRouterImg(self):
+		self.router.img = self.img
+		self.router.d = self.d
+		#self.router.d.rectangle((0,0,self.heigth,self.width),fill=0)
+	def getRouterImg(self):
+		self.img = self.router.img

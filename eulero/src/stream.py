@@ -1,3 +1,6 @@
+from PIL import Image, ImageDraw, ImageFont, ImageOps
+import datetime
+
 class Stream:
     def __init__(self, app):
         self.app = app
@@ -10,12 +13,13 @@ class Stream:
         datad_old=0
         datas_old=0
         next_app=False
-        devices = self.app.devicesList
+        #devices = self.app.router.devices
 
-        avail_devices = self.app.listAvailableDevices()
-        #print(avail_devices)
-        #avail_devices = []
+        avail_devices = self.app.router.listAvailableDevices()
         old_avail_devices = 0
+
+        sec_old = -1
+        counter = 0
 
         while(1):
             if (change or old_avail_devices!=len(avail_devices)):
@@ -39,8 +43,16 @@ class Stream:
             else:
                 data=self.app.recvData()
             
-            avail_devices = self.app.listAvailableDevices()
+            avail_devices = self.app.router.listAvailableDevices()
             
+            self.app.router.newImg()
+            sec = datetime.datetime.now().second
+            if sec!=sec_old:
+                sec_old = sec
+                counter += 1
+            
+            self.app.router.setText((45,0),str(counter), 255,self.app.getFonts()[1])
+
             if (data['UP']!=datau_old):
                 datau_old=data['UP']
                 if(datau_old):
@@ -69,7 +81,7 @@ class Stream:
                         next_app=True
                     else:
                         dev = avail_devices[i]
-                        self.app.streamOnDevice(dev)
+                        self.app.router.streamOnDevice(dev)
                         change=True
             
             if (next_app and data['SELECT']==0):
