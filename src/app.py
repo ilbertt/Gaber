@@ -25,8 +25,7 @@ class Application:
 		self.sc.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)
 		self.data=0
 		self.fails=0
-		#self.dead=False
-		#self.path=""
+		self.recvTime=time.time()
 		self.buttons={}
 
 		self.ispic=False
@@ -43,35 +42,25 @@ class Application:
 		try:
 			self.sc.send(data)
 		except:
-			if(self.fails==5):
-				sys.exit(0)
-			else:
-				self.fails+=1
-				pass
-				
-
-		"""try:
-			self.sc.send(data)
-		except:
-			print("dead")
-			self.dead=True
-			while(self.dead):
-				time.sleep(0.01)
-			
-			self.getPinConfig(self.path)"""
+			pass
 
 	def __recv(self):
 		self.sc.settimeout(0.05)
 		try:
 			self.data=int(self.sc.recv(1024))
+			self.recvTime = time.time()
 		except:
+			if time.time() - self.recvTime > 20:
+				print("dead")
+				self.sc.close()
+				sys.exit(0)
+				
 			pass
 
 		return self.data
 	
 	def getPinConfig(self, path):
 		with open(path, "r") as rf:
-			#self.path=path
 			tmp = json.load(rf)
 			self.inPins = tmp["in"]
 			self.outPins = tmp["out"]
@@ -87,10 +76,8 @@ class Application:
 				self.width=tmp["display"]["width"]
 				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width, tmp["display"]["type"])
 
-	"""def changeSocket(self, sc):
+	def changeSocket(self, sc):
 		self.sc=sc
-		self.fails=0
-		self.dead=False"""
 
 	def getConfig(self, path):
 		self.confpath=path

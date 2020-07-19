@@ -43,34 +43,44 @@ while(1):
 
 	if mac in users:
 		username=users[mac]
-		print("connecting USER:", username)
 
 		if username in threadAssign and threadAssign[username]["thread"].isAlive():
-			threadAssign[username]["thread"]
-			#threadAssign[username]["thread"].resumeConnection(so)
+			print("resuming USER:", username)
+			threadAssign[username]["thread"].resumeConnection(so)
+			
 		else:
 			if username in threadAssign:
+				print("dead USER", username)
 				threadAssign.pop(username)
 
-		UserMain = getattr(importlib.import_module(username+".main"), "Main")
-		app = Application(so, username, router)
-		user=UserMain(app)
+			print("connecting USER:", username)
+			UserMain = getattr(importlib.import_module(username+".main"), "Main")
+			app = Application(so, username, router)
+			user=UserMain(app)
 
-		threadAssign.__setitem__(username, {"thread": user})
-		user.start()
+			threadAssign.__setitem__(username, {"thread": user})
+			user.start()
 
 	elif mac in devices:
 		device = devices[mac]
-		deviceApp = Application(so, device, router)
-		print("connecting DEVICE:", device)
-		dev = Device(deviceApp, device)
-		dev.start()
-		threadAssign.__setitem__(device, {"thread": dev})
-		router.addDevice(dev)
+		
 
+		if device in threadAssign and threadAssign[device]["thread"].isAlive():
+			print("resuming DEVICE:", device)
+			threadAssign[device]["thread"].resumeConnection(so)
+			
+		else:
+			if device in threadAssign:
+				print("dead DEVICE", device)
+				threadAssign.pop(device)
+				router.removeDevice(device)
+		
+			print("connecting DEVICE:", device)
+			deviceApp = Application(so, device, router)
+			dev = Device(deviceApp, device)
+			dev.start()
+			threadAssign.__setitem__(device, {"thread": dev})
+			router.addDevice(dev)
+
+	print("Clients connected:", len(threadAssign))
 	print("-----")
-
-	'''for user in threadAssign:
-		print(threadAssign[user]["thread"].isAlive())'''
-	#print(threadAssign)
-	#print("Clients connected: ", len(threadAssign))

@@ -29,7 +29,8 @@ class Device(threading.Thread):
                 datap_old=data['PROXIMITY']
                 if(datap_old):
                     self.isNear=not self.isNear
-
-            '''if (next_app and data['SELECT']==0):
-                next_app=False
-                #menu.run()'''
+    
+    def resumeConnection(self, so):
+        self.app.changeSocketAndResume(so)
+        self.app.getPinConfig("src/"+self.name+"/pinout.json")
+        print("resumed")

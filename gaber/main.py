@@ -41,6 +41,6 @@ class Main(threading.Thread):
     def resumeConnection(self, so):
         self.app.changeSocket(so)
         self.app.getPinConfig("gaber/src/config/pinout.json")
-        self.app.dead=False
+        print("resumed")
 
 
