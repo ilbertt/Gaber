@@ -237,6 +237,7 @@ class Application:
 	
 	def removeAvailDevice(self, device):
 		if device in self.availableDevices:
+			device.stream=False
 			self.availableDevices.remove(device)
 	
 	def listAvailableDevices(self):
@@ -247,3 +248,13 @@ class Application:
 				self.removeAvailDevice(device)
 		
 		return self.availableDevices
+	
+	def streamOnDevice(self, dev):
+		if dev.stream:
+			dev.stream = False
+		else:
+			dev.stream = True
+
+		for device in self.availableDevices:
+			if device != dev:
+				device.stream=False

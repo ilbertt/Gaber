@@ -6,6 +6,7 @@ class Device(threading.Thread):
         threading.Thread.__init__(self)
         self.name=deviceName
         self.available=False
+        self.stream = False
         
 
     def run(self):
@@ -17,18 +18,16 @@ class Device(threading.Thread):
         next_app=False
         i=0
         while(1):
-            '''if (change):
+            if (self.stream and self.available):
                 change=False
                 self.app.newImg()
-                self.app.setText((35,0), "SETTINGS ", 255,self.app.getFonts()[0])
-                self.app.setText((10,10),"CONTRAST ", 255,self.app.getFonts()[0])
-                self.app.setText((10,20),"ROTATION ", 255,self.app.getFonts()[0])
-                self.app.setText((10,30),"MENU ", 255,self.app.getFonts()[0])
-                self.app.setText((1,10+i*10),">", 255,self.app.getFonts()[0])
+                self.app.setText((10,0),"GBROS", 255,self.app.getFonts()[1])
+                self.app.setText((32,32),"V 0.1", 255,self.app.getFonts()[1])
                 data=self.app.sendImg_and_recvData()
             else:
-                data=self.app.recvData()'''
-            data=self.app.recvData()
+                self.app.newImg()
+                data=self.app.sendImg_and_recvData()
+            #data=self.app.recvData()
 
             #print(data)	
             if (data['PROXIMITY']!=datap_old):

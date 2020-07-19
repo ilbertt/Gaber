@@ -24,10 +24,11 @@ class Stream:
                 self.app.newImg()
                 self.app.setText((45,0), "STREAM ", 255,self.app.getFonts()[0])
 
-                for device in devices:
-                    if device.available:
-                        self.app.setText((10,10*j),device.name, 255,self.app.getFonts()[0])
-                        j=j+1
+                for device in avail_devices:
+                    self.app.setText((10,10*j),device.name, 255,self.app.getFonts()[0])
+                    if device.stream:
+                        self.app.setText((80,10*j),"<->", 255,self.app.getFonts()[0])
+                    j=j+1
 
                 self.app.setText((10,10*j),"MENU ", 255,self.app.getFonts()[0])
                 last_i = j-1
@@ -66,14 +67,10 @@ class Stream:
                     #print(i,j, last_i)
                     if(i==last_i):
                         next_app=True
-                    elif(i==1):
-                        '''
-                        TODO: stream on click
-                        '''
-                    elif(i==0):
-                        '''
-                        TODO: stream on click
-                        '''
+                    else:
+                        dev = avail_devices[i]
+                        self.app.streamOnDevice(dev)
+                        change=True
             
             if (next_app and data['SELECT']==0):
                 next_app=False
