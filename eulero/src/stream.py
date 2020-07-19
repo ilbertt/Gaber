@@ -14,7 +14,7 @@ class Stream:
         next_app=False
         #devices = self.app.router.devices
 
-        avail_devices = self.app.router.listAvailableDevices()
+        avail_devices = self.app.router.listNearDevices()
         old_avail_devices = 0
 
         sec_old = -1
@@ -42,7 +42,7 @@ class Stream:
             else:
                 data=self.app.recvData()
             
-            avail_devices = self.app.router.listAvailableDevices()
+            avail_devices = self.app.router.listNearDevices()
             
             self.app.router.newImg()
             sec = datetime.datetime.now().second

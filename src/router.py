@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 class Router:
     def __init__(self):
         self.devices = []
-        self.availableDevices = []
+        self.nearDevices = []
         self.streamingDevice = None
         self.img = None
         self.d = None
@@ -16,23 +16,23 @@ class Router:
         if device in self.devices:
             self.devices.remove(device)
     
-    def __addAvailDevice(self, device):
-        if not (device in self.availableDevices):
-            self.availableDevices.append(device)
+    def __addNearDevice(self, device):
+        if not (device in self.nearDevices):
+            self.nearDevices.append(device)
 	
-    def __removeAvailDevice(self, device):
-        if device in self.availableDevices:
+    def __removeNearDevice(self, device):
+        if device in self.nearDevices:
             device.stream=False
-            self.availableDevices.remove(device)
+            self.nearDevices.remove(device)
 	
-    def listAvailableDevices(self):
+    def listNearDevices(self):
         for device in self.devices:
-            if device.available:
-                self.__addAvailDevice(device)
+            if device.isNear:
+                self.__addNearDevice(device)
             else:
-                self.__removeAvailDevice(device)
+                self.__removeNearDevice(device)
         
-        return self.availableDevices
+        return self.nearDevices
 
     def newImg(self):
         if self.streamingDevice:
@@ -52,6 +52,6 @@ class Router:
             dev.stream = True
             self.streamingDevice = dev
 
-        for device in self.availableDevices:
+        for device in self.nearDevices:
             if device != dev:
                 device.stream=False

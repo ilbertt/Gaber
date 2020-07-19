@@ -5,7 +5,7 @@ class Device(threading.Thread):
         self.app=app
         threading.Thread.__init__(self)
         self.name=deviceName
-        self.available=False
+        self.isNear=False
         self.stream = False
         #self.router = self.app.router
 
@@ -16,7 +16,7 @@ class Device(threading.Thread):
         datap_old=0
         
         while(1):
-            if (self.stream and self.available):
+            if (self.stream and self.isNear):
                 self.app.getRouterImg()
                 data=self.app.sendImg_and_recvData()
             else:
@@ -27,7 +27,7 @@ class Device(threading.Thread):
             if (data['PROXIMITY']!=datap_old):
                 datap_old=data['PROXIMITY']
                 if(datap_old):
-                    self.available=not self.available
+                    self.isNear=not self.isNear
 
             '''if (next_app and data['SELECT']==0):
                 next_app=False
