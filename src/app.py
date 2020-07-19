@@ -24,6 +24,7 @@ class Application:
 		self.sc=sc
 		self.sc.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)
 		self.data=0
+		self.fails=0
 		#self.dead=False
 		#self.path=""
 		self.buttons={}
@@ -42,7 +43,13 @@ class Application:
 		try:
 			self.sc.send(data)
 		except:
-			pass
+			if(self.fails==5):
+				sys.exit(0)
+			else:
+				self.fails+=1
+				pass
+				
+
 		"""try:
 			self.sc.send(data)
 		except:
@@ -82,6 +89,7 @@ class Application:
 
 	"""def changeSocket(self, sc):
 		self.sc=sc
+		self.fails=0
 		self.dead=False"""
 
 	def getConfig(self, path):
