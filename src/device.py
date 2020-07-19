@@ -7,6 +7,7 @@ class Device(threading.Thread):
         self.name=deviceName
         self.isNear=False
         self.stream = False
+        self.streamingUser = ""
         #self.router = self.app.router
 
     def run(self):

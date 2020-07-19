@@ -25,14 +25,23 @@ class Router:
             device.stream=False
             self.nearDevices.remove(device)
 	
-    def listNearDevices(self):
+    def __updateNearDevices(self):
         for device in self.devices:
             if device.isNear:
                 self.__addNearDevice(device)
             else:
                 self.__removeNearDevice(device)
+
+    def listNearDevices(self, user):
+        self.__updateNearDevices()
         
-        return self.nearDevices
+        availableDevices = []
+
+        for device in self.nearDevices:
+            if device.streamingUser == "" or device.streamingUser == user:
+                availableDevices.append(device)
+        
+        return availableDevices    
 
     def newImg(self):
         if self.streamingDevice:
@@ -45,14 +54,18 @@ class Router:
     def setText(self,pos,txt, txt_color, txt_font):
         self.d.text(pos, txt, txt_color,font=txt_font)
 
-    def streamOnDevice(self, dev):
+    def streamOnDevice(self, dev, user):
         if dev.stream:
             dev.stream = False
+            dev.streamingUser = ""
             self.streamingDevice = None
         else:
             dev.stream = True
+            dev.streamingUser = user
             self.streamingDevice = dev
 
         for device in self.nearDevices:
             if device != dev:
-                device.stream=False
+                if device.streamingUser == user:
+                    device.stream=False
+                    device.streamingUser = ""
