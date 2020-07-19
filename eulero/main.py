@@ -31,7 +31,7 @@ class Main(threading.Thread):
 
         applications=[["CLOCK", Clock(self.app)],["STREAM", Stream(self.app)],["TORCH", Torch(self.app)],["WEATHER", Weather(self.app)],["SETTINGS",Settings(self.app)]]
         menu=Menu(self.app, applications)
-        applications[0][1].run(menu)
+        menu.run(0)
 
     def resumeConnection(self, so):
         self.app.changeSocket(so)

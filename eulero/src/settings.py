@@ -4,14 +4,15 @@ class Settings:
 		self.contrast=0
 		self.rotation=0
 
-	def run(self, menu):
+	def run(self):
 		change=True
+		closeApp=False
 		datau_old=0
 		datad_old=0
 		datas_old=0
 		next_app=False
 		i=0
-		while(1):
+		while(not closeApp):
 			if (change):
 				change=False
 				self.app.newImg()
@@ -28,19 +29,19 @@ class Settings:
 			if (data['UP']!=datau_old):
 				datau_old=data['UP']
 				if(datau_old):
-					if(i==2):
-						i=0
+					if(i==0):
+						i=2
 					else:
-						i+=1
+						i-=1
 
 				change=True
 			elif (data['DOWN']!=datad_old):
 				datad_old=data['DOWN']
 				if(datad_old):
-					if(i==0):
-						i=2
+					if(i==2):
+						i=0
 					else:
-						i-=1
+						i+=1
 
 					change=True
 
@@ -60,8 +61,8 @@ class Settings:
 						change=True
 
 			if (next_app and data['SELECT']==0):
-				next_app=False
-				menu.run()
+				closeApp = True
+				continue
 
 
 

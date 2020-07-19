@@ -4,8 +4,9 @@ class Stream:
     def __init__(self, app):
         self.app = app
     
-    def run(self, menu):
+    def run(self):
         change=True
+        closeApp=False
         i=0
         j=1
         datau_old=0
@@ -20,7 +21,7 @@ class Stream:
         sec_old = -1
         counter = 0
 
-        while(1):
+        while(not closeApp):
             if (change or old_avail_devices!=len(avail_devices)):
                 change=False
                 old_avail_devices = len(avail_devices)
@@ -84,6 +85,5 @@ class Stream:
                         change=True
             
             if (next_app and data['SELECT']==0):
-                next_app=False
-                #print("menu")
-                menu.run()
+                closeApp=True
+                continue

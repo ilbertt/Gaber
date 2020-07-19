@@ -5,7 +5,9 @@ class Menu:
 		self.applications=applications
 		self.i=0
 
-	def run(self):
+	def run(self, firstApp=-1):
+		if firstApp >= 0:
+			self.applications[firstApp][1].run()
 		heigth=self.app.heigth
 		width=self.app.width
 		##self.app=Application("192.168.0.104", 1234, heigth,width)
@@ -66,6 +68,7 @@ class Menu:
 			
 			if (next_app and data['SELECT']==0):
 				next_app=False
-				#print(self.applications[i_tmp][0])
-				self.applications[i_tmp][1].run(self)
+				
+				self.applications[i_tmp][1].run()
+				changed=True
 
