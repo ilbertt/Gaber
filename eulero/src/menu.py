@@ -27,7 +27,7 @@ class Menu:
 				self.app.newImg()
 				self.app.setText((45,0),"MENU "+str(page)+"\\"+str(pages), 255,self.app.getFonts()[0])
 				self.app.setText((1,10+(self.i%n)*10),">", 255,self.app.getFonts()[0])
-				self.app.setText((10,10),self.applications[n*(page-1)][0], 255,self.app.getFonts()[0])
+				self.app.setText((10,10),self.applications[n*(page-1)], 255,self.app.getFonts()[0])
 				for x in range(0,n-1):
 					if((page-1)*n+x+1<len(self.applications)):
 						self.app.setText((10,10+(x+1)*10),self.applications[(page-1)*n+x+1], 255,self.app.getFonts()[0])
