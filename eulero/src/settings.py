@@ -6,13 +6,13 @@ class Settings:
 
 	def run(self):
 		change=True
-		closeApp=False
+		close_app=False
 		datau_old=0
 		datad_old=0
 		datas_old=0
 		next_app=False
 		i=0
-		while(not closeApp):
+		while(not close_app):
 			if (change):
 				change=False
 				self.app.newImg()
@@ -61,8 +61,10 @@ class Settings:
 						change=True
 
 			if (next_app and data['SELECT']==0):
-				closeApp = True
-				continue
+				next_app=False
+				close_app = True
+
+		return -1
 
 
 

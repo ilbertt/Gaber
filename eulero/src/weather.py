@@ -12,12 +12,12 @@ class Weather:
 
 	def run(self):
 		show=True
-		closeApp=False
+		close_app=False
 		datau_old=0
 		datad_old=0
 		datas_old=0
 		next_app=False
-		while(not closeApp):
+		while(not close_app):
 			t=time.localtime()
 			m=t.tm_min
 			if(m!=self.min_old):
@@ -67,6 +67,8 @@ class Weather:
 					next_app=True
 			
 			if (next_app and data['SELECT']==0):
-				closeApp=True
-				continue
+				next_app=False
+				close_app = True
+
+		return -1
 

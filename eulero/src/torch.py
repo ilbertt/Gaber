@@ -6,7 +6,7 @@ class Torch:
 
 	def run(self):
 		change=True
-		closeApp=False
+		close_app=False
 		i=0
 		j=0
 		red=0
@@ -19,7 +19,7 @@ class Torch:
 		color_picker = False
 		second_column = False
 		next_app=False
-		while(not closeApp):
+		while(not close_app):
 			if (change):
 					change=False
 					self.app.newImg()
@@ -140,7 +140,9 @@ class Torch:
 			#self.app.setNeopixel([red,green,blue])
 
 			if (next_app and data['SELECT']==0):
-				closeApp = True
-				continue
+				next_app=False
+				close_app = True
+
+		return -1
 
 
