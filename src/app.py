@@ -51,7 +51,7 @@ class Application:
 			self.recvTime = time.time()
 		except:
 			if time.time() - self.recvTime > 20:
-				print("dead")
+				print(self.username+": dead")
 				self.sc.close()
 				sys.exit(0)
 				
