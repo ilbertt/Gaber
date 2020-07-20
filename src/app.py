@@ -113,6 +113,15 @@ class Application:
 		self.__recv()
 		self.__send((str(pin).zfill(2)+str(freq).zfill(3)+str(duty).zfill(4)).encode())
 		time.sleep(0.01)
+
+	def readAdc(self, pin, resolution=1024):
+		self.__recv()
+		self.__send(str(pin).zfill(4))
+		time.sleep(0.01)
+		data=int(self.__recv())%resolution
+		self.__send(b'')
+		time.sleep(0.01)
+		return data
 		
 	def setNeopixel(self, status, pin=-1):
 		if(len(self.neoPins)):
