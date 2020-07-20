@@ -19,7 +19,8 @@ class Menu:
 		next_app=False
 		i_tmp=0
 		page=1
-		while(1):
+		close_app=False
+		while(not close_app):
 			if (changed):
 				self.app.newImg()
 				self.app.setText((45,0),"MENU "+str(page)+"\\"+str(pages), 255,self.app.getFonts()[0])
@@ -27,7 +28,7 @@ class Menu:
 				self.app.setText((10,10),self.applications[n*(page-1)][0], 255,self.app.getFonts()[0])
 				for x in range(0,n-1):
 					if((page-1)*n+x+1<len(self.applications)):
-						self.app.setText((10,10+(x+1)*10),self.applications[(page-1)*n+x+1][0], 255,self.app.getFonts()[0])
+						self.app.setText((10,10+(x+1)*10),self.applications[(page-1)*n+x+1], 255,self.app.getFonts()[0])
 				
 
 				data=self.app.sendImg_and_recvData()
@@ -67,5 +68,6 @@ class Menu:
 			if (next_app and data['SELECT']==0):
 				next_app=False
 				#print(self.applications[i_tmp][0])
-				self.applications[i_tmp][1].run(self)
+				close_app=True
 
+		return i_tmp

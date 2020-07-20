@@ -50,10 +50,9 @@ class Torch:
 				datas_old=data['SELECT']
 				if(datas_old):
 					if(i==2):
-						i_tmp=i
 						next_app=True
 					elif(i==1):
-						self.ledstatus=not self.ledstatus;
+						self.ledstatus=not self.ledstatus
 						self.app.setOutPin(16, self.ledstatus)
 					elif(i==0):
 						self.npstatus= not self.npstatus

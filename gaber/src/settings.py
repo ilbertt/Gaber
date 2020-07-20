@@ -49,7 +49,6 @@ class Settings:
 				datas_old=data['SELECT']
 				if(datas_old):
 					if(i==2):
-						i_tmp=i
 						next_app=True
 					elif(i==1):
 						self.rotation = not self.rotation

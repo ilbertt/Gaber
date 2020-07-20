@@ -10,13 +10,14 @@ class Weather:
 		self.page=1
 		self.i=0
 
-	def run(self, menu):
+	def run(self):
 		show=True
 		datau_old=0
 		datad_old=0
 		datas_old=0
 		next_app=False
-		while(1):
+		close_app=False
+		while(not close_app):
 			t=time.localtime()
 			m=t.tm_min
 			if(m!=self.min_old):
@@ -68,5 +69,6 @@ class Weather:
 			if (next_app and data['SELECT']==0):
 				next_app=False
 				#print("menu")
-				menu.run()
+				close_app=True
 
+		return -1

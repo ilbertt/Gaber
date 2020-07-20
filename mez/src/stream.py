@@ -3,13 +3,13 @@ class Stream:
         self.app = app
         self.screens = ["first", "second"]
     
-    def run(self, menu):
+    def run(self:
         change=True
         i=0
         j=1
         next_app=False
-
-        while(1):
+        close_app=False
+        while(not close_app):
             if (change):
                 change=False
                 self.app.newImg()
@@ -46,7 +46,6 @@ class Stream:
             elif(self.app.isPinUp("SELECT")):
                 print(i,j, last_i)
                 if(i==last_i):
-                    i_tmp=i
                     next_app=True
                 elif(i==1):
                     '''self.ledstatus=not self.ledstatus
@@ -59,4 +58,6 @@ class Stream:
 
             if (next_app):
                 next_app=False
-                menu.run()
+                close_app=True
+
+        return -1

@@ -5,7 +5,7 @@ class Clock:
 	def __init__(self, app):
 		self.app=app
 
-	def run(self, menu):
+	def run(self):
 		sec_old=-1
 		next_app=False
 		datas_old=0
@@ -20,8 +20,8 @@ class Clock:
 
 		clock_type = "analogic"
 		old_clock_type = ""
-
-		while(1):
+		close_app=False
+		while(not close_app):
 			now = datetime.datetime.now()
 			hour = now.hour
 			min = now.minute
@@ -77,7 +77,9 @@ class Clock:
 			if (next_app and data['SELECT']==0):
 				next_app=False
 				#print("menu")
-				menu.run()
+				close_app=True
+
+		return -1
 
 	def needleShape(self, angle, radius):
     
