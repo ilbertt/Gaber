@@ -1,5 +1,6 @@
 from mez.src.menu  		import Menu
 from mez.src.clock 		import Clock
+from mez.src.profile    import ProfilePic
 from mez.src.torch 		import Torch
 from mez.src.weather	    import Weather
 from mez.src.settings 	import Settings
@@ -30,8 +31,8 @@ class Main(threading.Thread):
         for _ in range(100):
             self.app.recvData()
 
-        applications_name=["CLOCK","STREAM","TORCH", "WEATHER", "SETTINGS"]
-        applications=[Clock(self.app), Stream(self.app),Torch(self.app), Weather(self.app),Settings(self.app)]
+        applications_name=["CLOCK","STREAM", "PROFILE", "TORCH", "WEATHER", "SETTINGS"]
+        applications=[Clock(self.app), Stream(self.app), ProfilePic(self.app), Torch(self.app), Weather(self.app),Settings(self.app)]
         menu=Menu(self.app, applications_name)
         while(1):
             if(self.i==-1):
