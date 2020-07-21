@@ -1,5 +1,7 @@
 import time
 from pyowm import OWM
+from ip2geotools.databases.noncommercial import DbIpCity
+
 class Weather:
 	def __init__(self, app):
 		self.app=app
@@ -11,6 +13,9 @@ class Weather:
 		self.i=0
 
 	def run(self):
+		response = DbIpCity.get(self.app.getIpAddress, api_key='free')
+		lat=response.latitude
+		lon=response.longitude
 		show=True
 		datau_old=0
 		datad_old=0
@@ -22,7 +27,7 @@ class Weather:
 			m=t.tm_min
 			if(m!=self.min_old):
 				self.min_old = m
-				self.weather = self.owm.weather_at_place('Milan,IT').get_weather()
+				self.weather = self.owm.weather_at_coords(lat, lon).get_weather()
 		
 			if(show):
 				self.app.newImg()

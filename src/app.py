@@ -6,9 +6,10 @@ import sys
 
 class Application:
 
-	def __init__(self, sc, username, router=None):
+	def __init__(self, sc, address, username, router=None):
 		self.heigth=0
 		self.width=0
+		self.address=address
 		self.username = username
 
 		self.router = router
@@ -249,3 +250,5 @@ class Application:
 		self.img_new=True
 		self.d.rectangle((0,0,self.heigth,self.width),fill=img_color)
 	
+	def getIpAddress(self):
+		return self.address[0]
