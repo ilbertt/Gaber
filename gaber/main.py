@@ -4,6 +4,7 @@ from gaber.src.torch 		import Torch
 from gaber.src.weather	    import Weather
 from gaber.src.settings 	import Settings
 from gaber.src.stream       import Stream
+from gaber.src.profile     import ProfilePic
 from PIL   			import Image
 import time
 import threading
@@ -30,8 +31,8 @@ class Main(threading.Thread):
         for _ in range(100):
             self.app.recvData()
 
-        applications_name=["CLOCK","TORCH", "WEATHER","STREAM", "SETTINGS"]
-        applications=[Clock(self.app), Torch(self.app), Weather(self.app), Stream(self.app), Settings(self.app)]
+        applications_name=["CLOCK","TORCH", "WEATHER","STREAM","ROULETTE","SETTINGS"]
+        applications=[Clock(self.app), Torch(self.app), Weather(self.app), Stream(self.app), ProfilePic(self.app), Settings(self.app)]
         menu=Menu(self.app, applications_name)
         while(1):
             if(self.i==-1):

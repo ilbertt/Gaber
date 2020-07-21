@@ -31,7 +31,7 @@ class Main(threading.Thread):
         for _ in range(100):
             self.app.recvData()
 
-        applications_name=["CLOCK","STREAM", "PROFILE", "TORCH", "WEATHER", "SETTINGS"]
+        applications_name=["CLOCK","STREAM", "ROULETTE", "TORCH", "WEATHER", "SETTINGS"]
         applications=[Clock(self.app), Stream(self.app), ProfilePic(self.app), Torch(self.app), Weather(self.app),Settings(self.app)]
         menu=Menu(self.app, applications_name)
         while(1):
