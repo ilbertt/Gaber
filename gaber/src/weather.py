@@ -13,9 +13,14 @@ class Weather:
 		self.i=0
 
 	def run(self):
-		response = DbIpCity.get(self.app.getIpAddress(), api_key='free')
-		lat=response.latitude
-		lon=response.longitude
+		ip=self.app.getIpAddress()
+		lat=45.7513025
+		lon=9.0308275
+		if not ("192.168" in ip):
+			response = DbIpCity.get(ip, api_key='free')
+			lat=response.latitude
+			lon=response.longitude
+			
 		show=True
 		datau_old=0
 		datad_old=0
