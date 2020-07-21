@@ -18,7 +18,6 @@ class Device(threading.Thread):
         
         while(1):
             if (self.stream and self.isNear):
-                self.app.getRouterImg()
                 data=self.app.sendImg_and_recvData()
             else:
                 self.app.newImg()
@@ -31,6 +30,6 @@ class Device(threading.Thread):
                     self.isNear=not self.isNear
     
     def resumeConnection(self, so):
-        self.app.changeSocketAndResume(so)
+        self.app.changeSocket(so)
         self.app.getPinConfig("src/"+self.name+"/pinout.json")
         print("resumed")
