@@ -34,6 +34,7 @@ class Application:
 		self.inPins = {}
 		self.outPins = {}
 		self.pwmPins= {}
+		self.img_new=False
 		
 		self.dispList= {"sh1106":0, "ssd1306":1}	
 
@@ -160,13 +161,15 @@ class Application:
 		if(self.ispic):
 			self.ispic=False
 
+		
 		pic=pic.convert('1')
 		pic=pic.tobytes()
 		self.data=self.__recv()
 		#time.sleep(0.05)
-		if(self.heigth and self.width):
+		if(self.heigth and self.width and self.img_new):
+			self.img_new=False
 			self.__send(pic[:512])
-			time.sleep(0.01)
+			#time.sleep(0.01)
 			self.__recv()
 			self.__send(pic[512:])
 		else:
@@ -195,26 +198,31 @@ class Application:
 			if(self.ispic):
 				self.ispic=False
 
-			pic=pic.convert('1')
-			pic=pic.tobytes()
-			self.__recv()
-			self.__send(pic[:512])
-			#time.sleep(0.01)
-			self.__recv()
-			self.__send(pic[512:])
+			if(self.img_new):
+				self.img_new=False
+				pic=pic.convert('1')
+				pic=pic.tobytes()
+				self.__recv()
+				self.__send(pic[:512])
+				#time.sleep(0.01)
+				self.__recv()
+				self.__send(pic[512:])
 				
 			time.sleep(0.01)
 
 	def setText(self,pos,txt, txt_color, txt_font):
+		self.img_new=True
 		self.d.text(pos, txt, txt_color,font=txt_font)
 
 	def setContrast(self, contrast):
+		self.img_new=True
 		self.config["contrast"]=contrast
 		if(self.confpath):
 			with open(self.confpath, "w") as rf:
 				json.dump(self.config, rf)
 
 	def setRotation(self, rotation):
+		self.img_new=True
 		self.config["rotation"]=rotation
 		if(self.confpath):
 			with open(self.confpath, "w") as rf:
@@ -224,6 +232,7 @@ class Application:
 		return self.fonts
 
 	def setImg(self, img):
+		self.img_new=True
 		self.img=img.convert('L')
 		self.ispic = True
 
@@ -231,16 +240,20 @@ class Application:
 		self.fonts.append(ImageFont.truetype(font, font_size))
 
 	def newImg(self):
+		self.img_new=True
 		self.img=Image.new("L",(self.heigth,self.width))
 		self.d=ImageDraw.Draw(self.img)
 		self.d.rectangle((0,0,self.heigth,self.width),fill=0)
 	
 	def fillImg(self, img_color):
+		self.img_new=True
 		self.d.rectangle((0,0,self.heigth,self.width),fill=img_color)
 
-	def setRouterImg(self):
+	"""def setRouterImg(self):
 		self.router.img = self.img
 		self.router.d = self.d
-		#self.router.d.rectangle((0,0,self.heigth,self.width),fill=0)
+		#self.router.d.rectangle((0,0,self.heigth,self.width),fill=0)"""
+
 	def getRouterImg(self):
+		self.img_new=True
 		self.img = self.router.img
