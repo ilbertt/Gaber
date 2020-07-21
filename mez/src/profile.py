@@ -25,7 +25,7 @@ class ProfilePic:
 		while(not close_app):
 			if time.time() - img_time > 3 and not pause:
 				self.app.setImg(pics[i])
-        		self.app.sendImg()
+				self.app.sendImg()
 				if i < len(pics)-1:
 					i += 1
 				else:
