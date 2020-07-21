@@ -1,5 +1,7 @@
 import time
 from pyowm import OWM
+from ip2geotools.databases.noncommercial import DbIpCity
+
 class Weather:
 	def __init__(self, app):
 		self.app=app
@@ -11,18 +13,26 @@ class Weather:
 		self.i=0
 
 	def run(self):
+		ip=self.app.getIpAddress()
+		lat=45.7513025
+		lon=9.0308275
+		if not ("192.168" in ip):
+			response = DbIpCity.get(ip, api_key='free')
+			lat=response.latitude
+			lon=response.longitude
+			
 		show=True
-		close_app=False
 		datau_old=0
 		datad_old=0
 		datas_old=0
 		next_app=False
+		close_app=False
 		while(not close_app):
 			t=time.localtime()
 			m=t.tm_min
 			if(m!=self.min_old):
 				self.min_old = m
-				self.weather = self.owm.weather_at_place('Milan,IT').get_weather()
+				self.weather = self.owm.weather_at_coords(lat, lon).get_weather()
 		
 			if(show):
 				self.app.newImg()
@@ -68,7 +78,7 @@ class Weather:
 			
 			if (next_app and data['SELECT']==0):
 				next_app=False
-				close_app = True
+				#print("menu")
+				close_app=True
 
 		return -1
-
