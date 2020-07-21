@@ -170,9 +170,12 @@ class Application:
 		if(self.heigth and self.width and self.img_new):
 			self.img_new=False
 			self.__send(pic[:512])
-			#time.sleep(0.01)
+			time.sleep(0.01)
 			self.__recv()
 			self.__send(pic[512:])
+			time.sleep(0.01)
+			self.__send(b'')
+			self.__recv()
 		else:
 			self.__send(b'')
 
@@ -205,9 +208,12 @@ class Application:
 				pic=pic.tobytes()
 				self.__recv()
 				self.__send(pic[:512])
-				#time.sleep(0.01)
+				time.sleep(0.01)
 				self.__recv()
 				self.__send(pic[512:])
+				time.sleep(0.01)
+				self.__send(b'')
+				self.__recv()
 				
 			time.sleep(0.01)
 
