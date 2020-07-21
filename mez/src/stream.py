@@ -1,63 +1,94 @@
+import datetime
+
 class Stream:
-    def __init__(self, app):
-        self.app = app
-        self.screens = ["first", "second"]
-    
-    def run(self:
-        change=True
-        i=0
-        j=1
-        next_app=False
-        close_app=False
-        while(not close_app):
-            if (change):
-                change=False
-                self.app.newImg()
-                self.app.setText((45,0), "STREAM ", 255,self.app.getFonts()[0])
+	def __init__(self, app):
+		self.app = app
+		self.devApp = 0
+	
+	def run(self):
+		change=True
+		close_app=False
+		i=0
+		j=1
+		datau_old=0
+		datad_old=0
+		datas_old=0
+		next_app=False
+		#devices = self.app.router.devices
 
-                for screen in self.screens:
-                    self.app.setText((10,10*j),screen, 255,self.app.getFonts()[0])
-                    j=j+1
+		avail_devices = self.app.router.listNearDevices(self.app.username)
+		old_avail_devices = 0
 
-                self.app.setText((10,10*j),"MENU ", 255,self.app.getFonts()[0])
-                last_i = j-1
-                j=1
-                self.app.setText((1,10+i*10),">", 255,self.app.getFonts()[0])
-                
-                self.app.sendImg_and_recvData()
-            else:
-                self.app.recvData()
+		sec_old = -1
+		counter = 0
 
-            #print(data)	
-            if (self.app.isPinUp("DOWN")):
-                if(i==last_i):
-                    i=0
-                else:
-                    i+=1
+		while(not close_app):
+			if (change or old_avail_devices!=len(avail_devices)):
+				change=False
+				old_avail_devices = len(avail_devices)
+				self.app.newImg()
+				self.app.setText((45,0), "STREAM ", 255,self.app.getFonts()[0])
 
-                change=True
-            elif (self.app.isPinUp("UP")):
-                if(i==0):
-                    i=last_i
-                else:
-                    i-=1
+				for device in avail_devices:
+					self.app.setText((10,10*j),device.name, 255,self.app.getFonts()[0])
+					if device.stream:
+						self.app.setText((80,10*j),"<->", 255,self.app.getFonts()[0])
+					j=j+1
 
-                change=True
-            elif(self.app.isPinUp("SELECT")):
-                print(i,j, last_i)
-                if(i==last_i):
-                    next_app=True
-                elif(i==1):
-                    '''self.ledstatus=not self.ledstatus
-                    self.app.setOutPin(16, self.ledstatus)'''
-                elif(i==0):
-                    '''self.npstatus= not self.npstatus
-                    self.app.setNeopixel([255*self.npstatus,255*self.npstatus,255*self.npstatus])'''
+				self.app.setText((10,10*j),"MENU ", 255,self.app.getFonts()[0])
+				last_i = j-1
+				j=1
+				self.app.setText((1,10+i*10),">", 255,self.app.getFonts()[0])
+				
+				data=self.app.sendImg_and_recvData()
+			else:
+				data=self.app.recvData()
+			
+			avail_devices = self.app.router.listNearDevices(self.app.username)
+			
+			sec = datetime.datetime.now().second
+			if sec!=sec_old:
+				sec_old = sec
+				counter += 1
 
-            self.app.storeData()
+			if (data['UP']!=datau_old):
+				datau_old=data['UP']
+				if(datau_old):
+					if(i==0):
+						i=last_i
+					else:
+						i-=1
 
-            if (next_app):
-                next_app=False
-                close_app=True
+					change=True
 
-        return -1
+			elif (data['DOWN']!=datad_old):
+				datad_old=data['DOWN']
+				if(datad_old):
+					if(i==last_i):
+						i=0
+					else:
+						i+=1
+
+					change=True
+
+			elif(data['SELECT']!=datas_old):
+				datas_old=data['SELECT']
+				if(datas_old):
+					#print(i,j, last_i)
+					if(i==last_i):
+						next_app=True
+					else:
+						dev = avail_devices[i]
+						self.devApp = self.app.router.streamOnDevice(dev, self.app.username)
+						change=True
+			
+
+			if self.devApp:
+				self.devApp.newImg()
+				self.devApp.setText((45,0),str(counter), 255,self.devApp.getFonts()[1])
+
+			if (next_app and data['SELECT']==0):
+				next_app=False
+				close_app=True
+
+		return -1

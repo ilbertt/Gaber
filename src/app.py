@@ -237,10 +237,4 @@ class Application:
 	
 	def fillImg(self, img_color):
 		self.d.rectangle((0,0,self.heigth,self.width),fill=img_color)
-
-	def setRouterImg(self):
-		self.router.img = self.img
-		self.router.d = self.d
-		#self.router.d.rectangle((0,0,self.heigth,self.width),fill=0)
-	def getRouterImg(self):
-		self.img = self.router.img
+	

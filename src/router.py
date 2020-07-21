@@ -4,7 +4,7 @@ class Router:
     def __init__(self):
         self.devices = []
         self.nearDevices = []
-        self.streamingDevice = None
+        self.streamingDevices = []
         self.img = None
         self.d = None
         self.dim = (128, 64)    # default size
@@ -41,31 +41,24 @@ class Router:
             if device.streamingUser == "" or device.streamingUser == user:
                 availableDevices.append(device)
         
-        return availableDevices    
-
-    def newImg(self):
-        if self.streamingDevice:
-            self.dim = (self.streamingDevice.app.heigth, self.streamingDevice.app.width)
-
-        self.img = Image.new("L", self.dim)
-        self.d = ImageDraw.Draw(self.img)
-        self.d.rectangle((0,0,self.dim[0],self.dim[1]),fill=0)
+        return availableDevices
     
-    def setText(self,pos,txt, txt_color, txt_font):
-        self.d.text(pos, txt, txt_color,font=txt_font)
-
     def streamOnDevice(self, dev, user):
         if dev.stream:
             dev.stream = False
             dev.streamingUser = ""
-            self.streamingDevice = None
+            self.streamingDevices.remove(dev)
+            return 0
         else:
+            dev.app.newImg()
             dev.stream = True
             dev.streamingUser = user
-            self.streamingDevice = dev
+            self.streamingDevices.append(dev)
 
-        for device in self.nearDevices:
-            if device != dev:
-                if device.streamingUser == user:
-                    device.stream=False
-                    device.streamingUser = ""
+            for device in self.nearDevices:
+                if device != dev:
+                    if device.streamingUser == user:
+                        device.stream=False
+                        device.streamingUser = ""
+            
+            return dev.app

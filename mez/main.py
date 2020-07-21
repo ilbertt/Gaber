@@ -3,6 +3,7 @@ from mez.src.clock 		import Clock
 from mez.src.torch 		import Torch
 from mez.src.weather	    import Weather
 from mez.src.settings 	import Settings
+from mez.src.stream      import Stream
 from PIL   			import Image
 import time
 import threading
@@ -29,8 +30,8 @@ class Main(threading.Thread):
         for _ in range(100):
             self.app.recvData()
 
-        applications_name=["CLOCK","TORCH", "WEATHER", "SETTINGS"]
-        applications=[Clock(self.app), Torch(self.app), Weather(self.app),Settings(self.app)]
+        applications_name=["CLOCK","STREAM","TORCH", "WEATHER", "SETTINGS"]
+        applications=[Clock(self.app), Stream(self.app),Torch(self.app), Weather(self.app),Settings(self.app)]
         menu=Menu(self.app, applications_name)
         while(1):
             if(self.i==-1):
