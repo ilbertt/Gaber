@@ -20,7 +20,7 @@ with open(users_path, "r") as rf:
 with open(devices_path, "r") as rf:
 	devices = json.load(rf)
 
-adress="192.168.1.14"
+adress="192.168.1.4"
 serv_port=50500
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -34,6 +34,7 @@ while(1):
 
 	so, adr=sock.accept()
 	print("-----\nNEW CONNECTION")
+	print(adr)
 	mac=so.recv(1024)
 	mac=binascii.hexlify(mac).decode()
 	print(mac)
@@ -55,7 +56,7 @@ while(1):
 
 			print("connecting USER:", username)
 			UserMain = getattr(importlib.import_module(username+".main"), "Main")
-			app = Application(so, username, router)
+			app = Application(so, adr, username, router)
 			user=UserMain(app)
 
 			threadAssign.__setitem__(username, {"thread": user})
@@ -76,7 +77,7 @@ while(1):
 				router.removeDevice(device)
 		
 			print("connecting DEVICE:", device)
-			deviceApp = Application(so, device, router)
+			deviceApp = Application(so, adr, device, router)
 			dev = Device(deviceApp, device)
 			dev.start()
 			threadAssign.__setitem__(device, {"thread": dev})
