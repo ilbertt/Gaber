@@ -3,7 +3,7 @@ import datetime
 class Stream:
 	def __init__(self, app):
 		self.app = app
-		self.devApp = 0
+		self.dev = 0
 	
 	def run(self):
 		change=True
@@ -45,11 +45,7 @@ class Stream:
 				data=self.app.recvData()
 			
 			avail_devices = self.app.router.listNearDevices(self.app.username)
-			
-			sec = datetime.datetime.now().second
-			if sec!=sec_old:
-				sec_old = sec
-				counter += 1
+
 
 			if (data['UP']!=datau_old):
 				datau_old=data['UP']
@@ -79,16 +75,23 @@ class Stream:
 						next_app=True
 					else:
 						dev = avail_devices[i]
-						self.devApp = self.app.router.streamOnDevice(dev, self.app.username)
+						self.dev = self.app.router.streamOnDevice(dev, self.app.username)
 						change=True
 			
-
-			if self.devApp:
-				self.devApp.newImg()
-				self.devApp.setText((45,0),str(counter), 255,self.devApp.getFonts()[1])
+			sec = datetime.datetime.now().second
+			if sec!=sec_old:
+				sec_old = sec
+				counter += 1
+				if self.dev:
+					self.dev.newImg()
+					self.dev.setText((45,0),str(counter), 255,self.dev.getFonts()[1])
+					self.dev.sendImg()
 
 			if (next_app and data['SELECT']==0):
 				next_app=False
+				if self.dev:
+					self.app.router.streamOnDevice(self.dev, self.app.username)
+				
 				close_app=True
 
 		return -1
