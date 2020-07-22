@@ -21,6 +21,7 @@ class Device(threading.Thread):
 
         datap_old=0
         disc=False
+        self.newImg()
         while(1):
             if (self.stream and self.isNear):
                 self.busy=True

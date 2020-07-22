@@ -50,7 +50,6 @@ class Router:
             self.streamingDevices.remove(dev)
             return 0
         else:
-            dev.app.newImg()
             dev.stream = True
             dev.streamingUser = user
             self.streamingDevices.append(dev)
