@@ -24,7 +24,6 @@ class Device(threading.Thread):
         disc=False
         while(1):
             if (self.stream and self.isNear):
-<<<<<<< HEAD
                 self.busy=True
                 if(self.sendType=="image"):
                     self.sendType=""
@@ -56,9 +55,6 @@ class Device(threading.Thread):
                     self.data=self.app.recvData()
                 disc=True
                 
-=======
-                data=self.app.sendImg_and_recvData()
->>>>>>> 4d428b30387bcbd30286391b08df0188ebef328d
             else:
                 if(disc):
                     disc=False
