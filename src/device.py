@@ -54,6 +54,7 @@ class Device(threading.Thread):
                 else:
                     self.data=self.__app.recvData()
                 disc=True
+                self.busy=False
                 
             else:
                 if(disc):
@@ -63,8 +64,7 @@ class Device(threading.Thread):
                 else:
                     self.data=self.__app.recvData()
 
-            if(self.busy):
-                self.busy=False
+                
 
             #print(self.data)	
             if (self.data['PROXIMITY']!=datap_old):
