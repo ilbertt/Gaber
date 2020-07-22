@@ -21,7 +21,7 @@ class Servo:
 		old_avail_devices = 0
 
 		sec_old = -1
-        switch = 0
+		switch = 0
 
 		while(not close_app):
 			if (change or old_avail_devices!=len(avail_devices)):
@@ -82,12 +82,12 @@ class Servo:
 			sec = datetime.datetime.now().second
 			if sec!=sec_old:
 				sec_old = sec
-                switch = not switch
+				switch = not switch
 				if self.dev:
-                    if not switch: 
-					    self.dev.setPwm(4, 50, 40)
-                    else:
-                        self.dev.setPwm(4, 50, 120)
+					if not switch: 
+						self.dev.setPwm(4, 50, 40)
+					else:
+						self.dev.setPwm(4, 50, 120)
 
 			if (next_app and data['SELECT']==0):
 				next_app=False
