@@ -58,6 +58,7 @@ class Device(threading.Thread):
                     disc=False
                     self.__app.newImg()
                     self.data=self.__app.sendImg_and_recvData()
+                    self.sendType=""
                 else:
                     self.data=self.__app.recvData()
 
