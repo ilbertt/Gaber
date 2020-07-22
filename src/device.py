@@ -13,7 +13,6 @@ class Device(threading.Thread):
         self.data={}
         self.adcvalue=0
 
-        self.busy=False
 
     def run(self):
         self.__app.getPinConfig("src/"+self.name+"/pinout.json")
@@ -24,37 +23,35 @@ class Device(threading.Thread):
         self.newImg()
         while(1):
             if (self.stream and self.isNear):
-                self.busy=True
                 if(self.sendType=="image"):
-                    self.sendType=""
                     self.data=self.__app.sendImg_and_recvData()
-                elif(self.sendType=="neopixel"):
                     self.sendType=""
+                elif(self.sendType=="neopixel"):
                     self.__app.setNeopixel(self.arguments[0],self.arguments[1])
                     self.arguments=[]
-                elif(self.sendType=="outpin"):
                     self.sendType=""
+                elif(self.sendType=="outpin"):
                     self.__app.setOutPin(self.arguments[0],self.arguments[1])
                     self.arguments=[]
-                elif(self.sendType=="inpin"):
                     self.sendType=""
+                elif(self.sendType=="inpin"):
                     self.__app.setInPin(self.arguments[0])
                     self.arguments=[]
-                elif(self.sendType=="pwm"):
                     self.sendType=""
+                elif(self.sendType=="pwm"):
                     self.__app.setPwm(self.arguments[0],self.arguments[1], self.arguments[2])
                     self.arguments=[]
+                    self.sendType=""
                 elif(self.sendType=="adc"):
-                    self.sendType=""
                     self.adcvalue=self.__app.readAdc(self.arguments[0],self.arguments[1])
-                elif(self.sendType=="setdisplay"):
                     self.sendType=""
+                elif(self.sendType=="setdisplay"):
                     self.__app.setPwm(self.arguments[0],self.arguments[1], self.arguments[2], self.arguments[3], self.arguments[4])
                     self.arguments=[]
+                    self.sendType=""
                 else:
                     self.data=self.__app.recvData()
                 disc=True
-                self.busy=False
                 
             else:
                 if(disc):
@@ -79,7 +76,7 @@ class Device(threading.Thread):
 
     def sendImg(self):
         self.sendType="image"
-        while(self.busy or self.sendType=="image"):
+        while( self.sendType=="image"):
             pass
 
     def recvData(self):
@@ -87,7 +84,7 @@ class Device(threading.Thread):
 
     def sendImg_and_recvData(self):
         self.sendType="image"
-        while(self.busy or self.sendType=="image"):
+        while( self.sendType=="image"):
             pass
 
         return self.data
@@ -96,20 +93,20 @@ class Device(threading.Thread):
         self.sendType="neopixel"
         self.arguments.append(status)
         self.arguments.append(pin)
-        while(self.busy or self.sendType=="neopixel"):
+        while( self.sendType=="neopixel"):
             pass
 
     def setOutPin(self, pin, value):
         self.sendType="outpin"
         self.arguments.append(pin)
         self.arguments.append(value)
-        while(self.busy or self.sendType=="outpin"):
+        while( self.sendType=="outpin"):
             pass
     
     def setInPin(self, pin):
         self.sendType="inpin"
         self.arguments.append(pin)
-        while(self.busy or self.sendType=="inpin"):
+        while( self.sendType=="inpin"):
             pass
 
     def setPwm(self, pin, freq, duty):
@@ -117,14 +114,14 @@ class Device(threading.Thread):
         self.arguments.append(pin)
         self.arguments.append(freq)
         self.arguments.append(duty)
-        while(self.busy or self.sendType=="pwm"):
+        while( self.sendType=="pwm"):
             pass
 
     def readAdc(self, pin, resolution=1024):
         self.sendType="adc"
         self.arguments.append(pin)
         self.arguments.append(resolution)
-        while(self.busy or self.sendType=="adc"):
+        while( self.sendType=="adc"):
             pass
 
         return self.adcvalue
@@ -136,7 +133,7 @@ class Device(threading.Thread):
         self.arguments.append(heigth)
         self.arguments.append(width)
         self.arguments.append(dispType)
-        while(self.busy or self.sendType=="setdisplay"):
+        while( self.sendType=="setdisplay"):
             pass
 
     def newImg(self):
