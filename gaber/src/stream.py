@@ -47,9 +47,9 @@ class Stream:
 			avail_devices = self.app.router.listNearDevices(self.app.username)
 
 
-			if (data['UP']!=datau_old):
-				datau_old=data['UP']
-				if(datau_old):
+			if (data['DOWN']!=datad_old):
+				datad_old=data['DOWN']
+				if(datad_old):
 					if(i==0):
 						i=last_i
 					else:
@@ -57,9 +57,9 @@ class Stream:
 
 					change=True
 
-			elif (data['DOWN']!=datad_old):
-				datad_old=data['DOWN']
-				if(datad_old):
+			elif (data['UP']!=datau_old):
+				datau_old=data['UP']
+				if(datau_old):
 					if(i==last_i):
 						i=0
 					else:
