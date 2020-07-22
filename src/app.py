@@ -23,9 +23,8 @@ class Application:
 		self.config={"contrast": 0,  "rotation": 0}
 
 		self.sc=sc
-		self.sc.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)
 		self.data=0
-		self.fails=0
+		self.canSend=True
 		self.recvTime=time.time()
 		self.buttons={}
 
@@ -41,6 +40,14 @@ class Application:
 		self.dispList= {"sh1106":0, "ssd1306":1}	
 
 	def __send(self,data):
+		if self.canSend:
+			self.sc.settimeout(10)
+			try:
+				self.sc.send(data)
+			except:
+				pass
+	
+	def __sendc(self, data):
 		self.sc.settimeout(10)
 		try:
 			self.sc.send(data)
@@ -62,6 +69,13 @@ class Application:
 
 		return self.data
 	
+	def appSleep(self, recvNumber, notify=False):
+		if((self.notifyStarted and notify) or (not self.notifyStarted)):
+			for _ in range(recvNumber):
+				self.recvData()
+		else:
+			time.sleep(0.01)
+
 	def getPinConfig(self, path):
 		with open(path, "r") as rf:
 			tmp = json.load(rf)
@@ -78,8 +92,11 @@ class Application:
 				self.heigth=tmp["display"]["heigth"]
 				self.width=tmp["display"]["width"]
 				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width, tmp["display"]["type"])
+		self.canSend = True
 
 	def changeSocket(self, sc):
+		print("changing socket...")
+		self.canSend = False
 		self.sc=sc
 
 	def getConfig(self, path):
@@ -104,7 +121,7 @@ class Application:
 	def setInPin(self, pin, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			self.__recv()
-			self.__send(str(pin).zfill(2).encode())
+			self.__sendc(str(pin).zfill(2).encode())
 
 		time.sleep(0.01)
 
@@ -114,7 +131,7 @@ class Application:
 			self.width = width
 			disp=self.dispList[dispType]
 			self.__recv()
-			self.__send((str(sda).zfill(2)+str(scl).zfill(2)+str(heigth).zfill(3)+str(width).zfill(3)+str(disp).zfill(2)).encode())
+			self.__sendc((str(sda).zfill(2)+str(scl).zfill(2)+str(heigth).zfill(3)+str(width).zfill(3)+str(disp).zfill(2)).encode())
 		
 		time.sleep(0.01)
 
@@ -239,6 +256,10 @@ class Application:
 				
 		
 		time.sleep(0.01)
+
+	def resumeImg(self):
+		self.img_new=True
+		self.sendImg()
 
 	def setText(self,pos,txt, txt_color, txt_font, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):

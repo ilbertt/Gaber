@@ -21,15 +21,13 @@ class Main(threading.Thread):
         pic=Image.open('eulero/src/images/pic.png')
         self.app.setImg(pic)
         self.app.sendImg()
-        for _ in range(100):
-            self.app.recvData()
+        self.app.appSleep(100)
 
         self.app.newImg()
         self.app.setText((10,0),"GBROS", 255,self.app.getFonts()[1])
         self.app.setText((32,32),"V 0.1", 255,self.app.getFonts()[1])
         self.app.sendImg()
-        for _ in range(100):
-            self.app.recvData()
+        self.app.appSleep(100)
 
         applications_name=["CLOCK","STREAM","TORCH","ROULETTE","WEATHER", "SETTINGS"]
         applications=[Clock(self.app), Stream(self.app),Torch(self.app),ProfilePic(self.app),Weather(self.app),Settings(self.app)]
@@ -43,6 +41,7 @@ class Main(threading.Thread):
     def resumeConnection(self, so):
         self.app.changeSocket(so)
         self.app.getPinConfig("eulero/src/config/pinout.json")
+        self.app.resumeImg()
         print("resumed")
 
 

@@ -33,6 +33,7 @@ print("SERVER STARTED")
 while(1):
 
 	so, adr=sock.accept()
+	so.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)	# send data separately
 	print("-----\nNEW CONNECTION")
 	print(adr)
 	mac=so.recv(1024)
