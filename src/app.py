@@ -74,7 +74,7 @@ class Application:
 			for neo in tmp["neopixel"]:
 				self.setNeoPin(tmp["neopixel"][neo]["number"])
 
-			if(tmp["display"]):
+			if ("display" in tmp):
 				self.heigth=tmp["display"]["heigth"]
 				self.width=tmp["display"]["width"]
 				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width, tmp["display"]["type"])
