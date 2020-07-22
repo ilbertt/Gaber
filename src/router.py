@@ -61,4 +61,4 @@ class Router:
                         device.stream=False
                         device.streamingUser = ""
             
-            return dev.app
+            return dev
