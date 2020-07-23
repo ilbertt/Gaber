@@ -1,4 +1,16 @@
 {
-    "246f28b07d30": "tv_livingroom",
-    "98f4ab68fad8": "tv_kitchen"
+    "246f28b07d30": {
+                        "name" : "front door",
+                        "class" : "door"
+                    },
+
+    "98f4ab68fad8": {
+                        "name" : "tv kitchen",
+                        "class" : "screen"
+                    },
+
+    "2462abcab9ac": {
+                        "name" : "tv livingroom",
+                        "class" : "screen"
+    }
 }

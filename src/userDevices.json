@@ -1,5 +1,5 @@
 {
-    "eulero": ["door","tv_kitchen"],
-    "gaber": ["door","tv_kitchen"],
-    "mez": ["door"]
+    "eulero": ["front_door","tv_kitchen"],
+    "gaber": ["front_door","tv_kitchen"],
+    "mez": ["front_door", "tv_livingroom"]
 }
