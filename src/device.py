@@ -1,10 +1,11 @@
 import threading
 
 class Device(threading.Thread):
-    def __init__(self, app, deviceName):
+    def __init__(self, app, device):
         self.__app=app
         threading.Thread.__init__(self)
-        self.name=deviceName
+        self.name=device["name"]
+        self.type=device["type"]
         self.isNear=False
         self.stream = False
         self.streamingUser = ""
@@ -169,3 +170,6 @@ class Device(threading.Thread):
 
     def getDeviceName(self):
         return self.name
+
+    def getDeviceType(self):
+        return self.type
