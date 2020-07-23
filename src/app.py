@@ -313,7 +313,7 @@ class Application:
 	def startNotify(self):
 		self.imgOld=self.img
 		self.notifyStarted=True
-		self.newImg()
+		self.img=Image.new("L",(self.heigth,self.width))
 
 	def stopNotify(self):
 		self.notifyStarted=False
