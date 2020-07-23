@@ -3,9 +3,12 @@ from mez.src.clock 		import Clock
 from mez.src.servo      import Servo
 from mez.src.profile    import ProfilePic
 from mez.src.torch 		import Torch
-from mez.src.weather	    import Weather
+from mez.src.weather	import Weather
 from mez.src.settings 	import Settings
-from mez.src.stream      import Stream
+from mez.src.stream     import Stream
+
+from src.notifyService  import NotifyService
+
 from PIL   			import Image
 import time
 import threading
@@ -30,6 +33,8 @@ class Main(threading.Thread):
         self.app.setText((32,32),"V 0.2", 255,self.app.getFonts()[1])
         self.app.sendImg()
         self.app.appSleep(100)
+
+        NotifyService(self.app, self.app.router).start()
 
         applications_name=["CLOCK","STREAM", "SERVO", "ROULETTE", "TORCH", "WEATHER", "SETTINGS"]
         applications=[Clock(self.app), Stream(self.app), Servo(self.app), ProfilePic(self.app), Torch(self.app), Weather(self.app),Settings(self.app)]
