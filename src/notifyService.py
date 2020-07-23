@@ -1,6 +1,7 @@
-from PIL   			import Image
+from PIL   				import Image
 import time
 import threading
+from src.iot_funct.door import  Door
 #from application import Application
 
 class NotifyService(threading.Thread):
@@ -14,7 +15,7 @@ class NotifyService(threading.Thread):
 		self.device=0
 		self.refused=[]
 		threading.Thread.__init__(self)
-		self.appList={} #{"devname": Application}
+		self.appList={"door": Door()} #{"dev.type": IOT_Functions()}
 
 	def run(self):
 		while(not self.device):
@@ -65,7 +66,7 @@ class NotifyService(threading.Thread):
 					accepted=True
 
 		if(accepted):
-					self.appList[self.device.getDeviceName()].run(self.device, self.app)
+					self.appList[self.device.getDeviceType()].run(self.device, self.app)
 
 		self.app.stopNotify()
 		self.app.device.resetStreamingUser()
