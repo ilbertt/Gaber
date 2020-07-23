@@ -160,3 +160,9 @@ class Device(threading.Thread):
 
     def setNeoPin(self, pin):
         self.__app.setNeoPin(pin)
+
+    def setSteamingUser(self, user):
+        self.streamingUser=user
+    
+    def resetStreamingUser(self):
+        self.streamingUser=""

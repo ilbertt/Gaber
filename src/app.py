@@ -16,6 +16,7 @@ class Application:
 
 		self.fonts = [ImageFont.truetype("Arial.ttf",11),ImageFont.truetype("Arial.ttf",30)]
 		self.img=Image.new("L",(self.heigth,self.width))
+		self.imgOld=self.img
 		self.d=ImageDraw.Draw(self.img)
 		self.d.rectangle((0,0,self.heigth,self.width),fill=0)
 		
@@ -34,7 +35,7 @@ class Application:
 		self.inPins = {}
 		self.outPins = {}
 		self.pwmPins= {}
-		self.img_new=False
+		self.imgIsNew=False
 		self.notifyStarted=False
 		
 		self.dispList= {"sh1106":0, "ssd1306":1}	
@@ -202,9 +203,9 @@ class Application:
 			pic=pic.tobytes()
 			data=self.__recv()
 			#time.sleep(0.05)
-			if(self.heigth and self.width and self.img_new):
-				self.img_new=False
-				l=int(len(pic)/2)
+			if(self.heigth and self.width and self.imgIsNew):
+				self.imgIsNew=False
+				l=int(len(pic)/2)\
 				self.__send(pic[:l])
 				time.sleep(0.01)
 				self.__recv()
@@ -240,8 +241,8 @@ class Application:
 				if(self.ispic):
 					self.ispic=False
 
-				if(self.img_new):
-					self.img_new=False
+				if(self.imgIsNew):
+					self.imgIsNew=False
 					pic=pic.convert('1')
 					pic=pic.tobytes()
 					l=int(len(pic)/2)
@@ -258,17 +259,17 @@ class Application:
 		time.sleep(0.01)
 
 	def resumeImg(self):
-		self.img_new=True
+		self.imgIsNew=True
 		self.sendImg()
 
 	def setText(self,pos,txt, txt_color, txt_font, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.img_new=True
+			self.imgIsNew=True
 			self.d.text(pos, txt, txt_color,font=txt_font)
 
 	def setContrast(self, contrast, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.img_new=True
+			self.imgIsNew=True
 			self.config["contrast"]=contrast
 			if(self.confpath):
 				with open(self.confpath, "w") as rf:
@@ -276,7 +277,7 @@ class Application:
 
 	def setRotation(self, rotation, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.img_new=True
+			self.imgIsNew=True
 			self.config["rotation"]=rotation
 			if(self.confpath):
 				with open(self.confpath, "w") as rf:
@@ -287,7 +288,7 @@ class Application:
 
 	def setImg(self, img, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.img_new=True
+			self.imgIsNew=True
 			self.img=img.convert('L')
 			self.ispic = True
 
@@ -296,23 +297,26 @@ class Application:
 
 	def newImg(self, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.img_new=True
+			self.imgIsNew=True
 			self.img=Image.new("L",(self.heigth,self.width))
 			self.d=ImageDraw.Draw(self.img)
 			self.d.rectangle((0,0,self.heigth,self.width),fill=0)
 	
 	def fillImg(self, img_color, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.img_new=True
+			self.imgIsNew=True
 			self.d.rectangle((0,0,self.heigth,self.width),fill=img_color)
 	
 	def getIpAddress(self):
 		return self.address[0]
 
 	def startNotify(self):
+		self.imgOld=self.img
 		self.notifyStarted=True
 		self.newImg()
 
 	def stopNotify(self):
 		self.notifyStarted=False
 		self.newImg()
+		self.img=self.imgOld
+		self.sendImg()
