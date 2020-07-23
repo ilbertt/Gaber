@@ -1,13 +1,17 @@
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+import json
 
 class Router:
     def __init__(self):
         self.devices = []
         self.nearDevices = []
         self.streamingDevices = []
-        self.img = None
-        self.d = None
-        self.dim = (128, 64)    # default size
+        self.lastDevices = {}
+        
+        self.users = []
+
+        with open("src/userDevices.json", "r") as rf:
+            self.userDevices = json.load(rf)
 
     def addDevice(self, device):
         self.devices.append(device)
@@ -16,28 +20,44 @@ class Router:
         if device in self.devices:
             self.devices.remove(device)
     
-    def __addNearDevice(self, device):
-        if not (device in self.nearDevices):
-            self.nearDevices.append(device)
+    def addUser(self, user):
+        self.users.append(user)
+    
+    def removeUser(self, user):
+        if user in self.users:
+            self.users.remove(user)
+    
+    def getLastDevice(self, username):
+        if username in self.lastDevices:
+            return self.lastDevices[username]
+    
+    def resetLastDevice(self, username):
+        if username in self.lastDevices:
+            self.lastDevices[username]=0
+
+    def __addNearDevice(self, device, user):
+        if not (device in self.nearDevices[user]):
+            self.nearDevices[user].append(device)
 	
-    def __removeNearDevice(self, device):
-        if device in self.nearDevices:
+    def __removeNearDevice(self, device, user):
+        if device in self.nearDevices[user]:
             device.stream=False
-            self.nearDevices.remove(device)
+            self.nearDevices[user].remove(device)
 	
-    def __updateNearDevices(self):
+    def __updateNearDevices(self, user):
         for device in self.devices:
             if device.isNear:
-                self.__addNearDevice(device)
+                if device in self.userDevices[user]:
+                    self.__addNearDevice(device, user)
             else:
-                self.__removeNearDevice(device)
+                self.__removeNearDevice(device, user)
 
     def listNearDevices(self, user):
-        self.__updateNearDevices()
+        self.__updateNearDevices(user)
         
         availableDevices = []
 
-        for device in self.nearDevices:
+        for device in self.nearDevices[user]:
             if device.streamingUser == "" or device.streamingUser == user:
                 availableDevices.append(device)
         
