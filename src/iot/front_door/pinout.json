@@ -1,0 +1,13 @@
+{
+    "in":{
+        "PROXIMITY": {
+            "number": 19
+        }
+    },
+    "out": {
+    },
+    "neopixel":{
+    },
+    "display":{
+    }
+}

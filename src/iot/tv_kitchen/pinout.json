@@ -9,6 +9,10 @@
     "neopixel":{
     },
     "display":{
-
+        "heigth":128,
+        "width":64,
+        "sda": 21,
+        "scl": 22,
+        "type": "ssd1306"
     }
 }
