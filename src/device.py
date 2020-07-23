@@ -165,7 +165,7 @@ class Device(threading.Thread):
     def resetStreamingUser(self):
         self.streamingUser=""
     
-    def setSteamingUser(self, user):
+    def setStreamingUser(self, user):
         self.streamingUser=user
 
     def getDeviceName(self):
