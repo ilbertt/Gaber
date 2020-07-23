@@ -205,7 +205,7 @@ class Application:
 			#time.sleep(0.05)
 			if(self.heigth and self.width and self.imgIsNew):
 				self.imgIsNew=False
-				l=int(len(pic)/2)\
+				l=int(len(pic)/2)
 				self.__send(pic[:l])
 				time.sleep(0.01)
 				self.__recv()
@@ -265,7 +265,7 @@ class Application:
 	def setText(self,pos,txt, txt_color, txt_font, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			self.imgIsNew=True
-			self.d.text(pos, txt, txt_color,font=txt_font)
+			self.d.text(pos, txt+" ", txt_color,font=txt_font)
 
 	def setContrast(self, contrast, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
