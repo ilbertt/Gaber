@@ -17,6 +17,7 @@ class Main(threading.Thread):
         self.app=app
         self.i=0
         threading.Thread.__init__(self)
+        self.name = self.app.username
     
     def run(self):
         self.app.getPinConfig("eulero/src/config/pinout.json")
@@ -28,7 +29,7 @@ class Main(threading.Thread):
 
         self.app.newImg()
         self.app.setText((10,0),"GBROS", 255,self.app.getFonts()[1])
-        self.app.setText((32,32),"V 0.1", 255,self.app.getFonts()[1])
+        self.app.setText((32,32),"V 0.2", 255,self.app.getFonts()[1])
         self.app.sendImg()
         self.app.appSleep(100)
         

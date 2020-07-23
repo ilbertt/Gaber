@@ -13,11 +13,13 @@ class Device(threading.Thread):
         self.arguments=[]
         self.data={}
         self.adcvalue=0
+        self.customParams = {}
 
 
     def run(self):
         self.__app.getPinConfig("src/iot/"+self.name+"/pinout.json")
         self.__app.getConfig("src/iot/"+self.name+"/config.json")
+        self.customParams = self.__app.config["custom"]
 
         datap_old=0
         disc=False
@@ -27,6 +29,7 @@ class Device(threading.Thread):
                 if(self.sendType=="image"):
                     self.data=self.__app.sendImg_and_recvData()
                     self.sendType=""
+                    disc=True
                 elif(self.sendType=="neopixel"):
                     self.__app.setNeopixel(self.arguments[0],self.arguments[1])
                     self.arguments=[]
@@ -52,7 +55,6 @@ class Device(threading.Thread):
                     self.sendType=""
                 else:
                     self.data=self.__app.recvData()
-                disc=True
                 
             else:
                 if(disc):
@@ -164,9 +166,11 @@ class Device(threading.Thread):
     
     def resetStreamingUser(self):
         self.streamingUser=""
+        self.stream = False
     
     def setStreamingUser(self, user):
         self.streamingUser=user
+        self.stream = True
 
     def getDeviceName(self):
         return self.name

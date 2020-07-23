@@ -31,7 +31,7 @@ class Application:
 
 		self.ispic=False
 
-		self.neoPins=[15]
+		self.neoPins=[]
 		self.inPins = {}
 		self.outPins = {}
 		self.pwmPins= {}
@@ -110,7 +110,8 @@ class Application:
 			self.setInPin(self.inPins[pin]['number'])
 
 	def setNeoPin(self, pin):
-		self.neoPins.append(pin)
+		if not (pin in self.neoPins):
+			self.neoPins.append(pin)
 
 	def setOutPin(self, pin, value, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
@@ -166,23 +167,23 @@ class Application:
 				else:
 					self.__send(b'')
 
-			time.sleep(0.01)
+		time.sleep(0.01)
 
 	def recvData(self, notify=False):
 		data=0
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			data=self.__recv()
 			self.__send(b'')
-
+		buttons = {}
 		for pin in self.inPins:
 			if(data & 1<<self.inPins[pin]["number"]):
-				self.buttons[pin]=1
+				buttons[pin]=1
 			else:
-				self.buttons[pin]=0
+				buttons[pin]=0
 
 		time.sleep(0.01)
 		#print(self.buttons)
-		return self.buttons
+		return buttons
 
 	def sendImg_and_recvData(self, notify=False):
 		data=0
@@ -216,16 +217,16 @@ class Application:
 			else:
 				self.__send(b'')
 
-
+		buttons = {}
 		for pin in self.inPins:
 			if(data & 1<<self.inPins[pin]["number"]):
-				self.buttons[pin]=1
+				buttons[pin]=1
 			else:
-				self.buttons[pin]=0
+				buttons[pin]=0
 
 		time.sleep(0.01)
 		#print(self.buttons)
-		return self.buttons
+		return buttons
 
 	def sendImg(self, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
@@ -312,11 +313,14 @@ class Application:
 
 	def startNotify(self):
 		self.imgOld=self.img
+		self.newImg()
 		self.notifyStarted=True
-		self.img=Image.new("L",(self.heigth,self.width))
+		self.config["contrast"] = not self.config["contrast"]
 
 	def stopNotify(self):
 		self.notifyStarted=False
 		self.newImg()
 		self.img=self.imgOld
+		self.config["contrast"] = not self.config["contrast"]
 		self.sendImg()
+		

@@ -2,6 +2,7 @@ from PIL   				import Image
 import time
 import threading
 from src.iot_funct.door import  Door
+from numpy.random 		import randint
 #from application import Application
 
 class NotifyService(threading.Thread):
@@ -19,60 +20,66 @@ class NotifyService(threading.Thread):
 		self.appList={"door": Door()} #{"dev.type": IOT_Functions()}
 
 	def run(self):
-		print("notify started")
-		while(self.device == 0):
-			devs=self.router.listNearDevices(self.username)
-			for dev in devs: 
-				if(not (dev in self.recentDevices)):
-					dev.setStreamingUser(self.username)
-					self.device=dev
-					self.recentDevices.append(dev)
+		print(self.app.username+": notify started")
+		while 1:
+			while(self.device == 0):
+				devs=self.router.listNearDevices(self.username)
+				for dev in devs: 
+					if(not (dev in self.recentDevices)):
+						dev.setStreamingUser(self.username)
+						self.device=dev
+						self.recentDevices.append(dev)
 
-			for dev in self.recentDevices:
-				if(not (dev in devs)):
-					self.recentDevices.remove(dev)
+				for dev in self.recentDevices:
+					if(not (dev in devs)):
+						self.recentDevices.remove(dev)
+				
+			self.app.startNotify()
+			color = list(randint(0,32,3))
+			self.app.setNeopixel(color, -1, True)
+			self.app.setText((40,0), "NOTIFY", 255,self.app.getFonts()[0], True)
+			self.app.setText((10,20), "FOUND", 255,self.app.getFonts()[0], True)
 			
-		print("notify")
-		self.app.startNotify()
-		self.app.setText((40,0), "NOTIFY", 255,self.app.getFonts()[0], True)
-		self.app.setText((10,20), "FOUND", 255,self.app.getFonts()[0], True)
-		self.app.setText((10,35), self.device.getDeviceName(), 255,self.app.getFonts()[0], True)
-		self.app.setText((10,50), "CONNECT?", 255,self.app.getFonts()[0], True)
-		self.app.sendImg(True)
-		data=self.app.recvData(True)
-		datad_old=data['DOWN']
-		datau_old=data['UP']
-		datas_old=data['SELECT']
-		stop=False
-		accepted=False
-		while(not stop):
+			notifMsg = self.appList[self.device.getDeviceType()].getNotificationMessage(self.device)
+			for line in notifMsg:
+				self.app.setText(line[0], line[1], 255,self.app.getFonts()[0], True)
+
+			self.app.sendImg(True)
 			data=self.app.recvData(True)
-			if (data['DOWN']!=datad_old):
-				datad_old=data['DOWN']
-				if(not datad_old):
-					stop=True
-					accepted=False
+			datad_old=data['DOWN']
+			datau_old=data['UP']
+			datas_old=data['SELECT']
+			stop=False
+			accepted=False
+			startTime = time.time()
+			while(not stop):
+				data=self.app.recvData(True)
+				if (data['DOWN']!=datad_old):
+					datad_old=data['DOWN']
+					if(datad_old):
+						stop=True
+						
+				elif (data['UP']!=datau_old):
+					datau_old=data['UP']
+					if(datau_old):
+						stop=True	
+				
+				elif(data['SELECT']!=datas_old):
+					datas_old=data['SELECT']
+					if(datas_old):
+						stop=True
+						accepted=True
 
-					
-			elif (data['UP']!=datau_old):
-				datau_old=data['UP']
-				if(not datau_old):
-					stop=True
-					accepted=False
-					
-			
-			elif(data['SELECT']!=datas_old):
-				datas_old=data['SELECT']
-				if(not datas_old):
-					stop=True
-					accepted=True
+				elif(time.time() - startTime > 10):
+					stop = True
 
-		if(accepted):
-					self.appList[self.device.getDeviceType()].run(self.device, self.app)
+			if(accepted):
+				self.appList[self.device.getDeviceType()].run(self.device)
 
-		self.app.stopNotify()
-		self.app.device.resetStreamingUser()
-		self.app.device=0
+			self.app.setNeopixel([0, 0, 0], -1, True)
+			self.app.stopNotify()
+			self.device.resetStreamingUser()
+			self.device=0
 			
 	def getUsedDevices(self):
 		return self.recentDevices

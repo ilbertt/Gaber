@@ -37,7 +37,6 @@ class Router:
 
     def __addNearDevice(self, device, user):
         if not (user in self.nearDevices):
-            print(user)
             self.nearDevices.__setitem__(user, [])
         
         if not (device in self.nearDevices[user]):
