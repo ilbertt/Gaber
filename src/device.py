@@ -5,7 +5,7 @@ class Device(threading.Thread):
         self.__app=app
         threading.Thread.__init__(self)
         self.name=device["name"]
-        self.type=device["type"]
+        self.type=device["class"]
         self.isNear=False
         self.stream = False
         self.streamingUser = ""
@@ -16,8 +16,8 @@ class Device(threading.Thread):
 
 
     def run(self):
-        self.__app.getPinConfig("src/"+self.name+"/pinout.json")
-        self.__app.getConfig("src/"+self.name+"/config.json")
+        self.__app.getPinConfig("src/iot/"+self.name+"/pinout.json")
+        self.__app.getConfig("src/iot/"+self.name+"/config.json")
 
         datap_old=0
         disc=False
@@ -73,7 +73,7 @@ class Device(threading.Thread):
     
     def resumeConnection(self, so):
         self.__app.changeSocket(so)
-        self.__app.getPinConfig("src/"+self.name+"/pinout.json")
+        self.__app.getPinConfig("src/iot/"+self.name+"/pinout.json")
         print("resumed")
 
     def sendImg(self):
@@ -161,12 +161,12 @@ class Device(threading.Thread):
 
     def setNeoPin(self, pin):
         self.__app.setNeoPin(pin)
-
-    def setSteamingUser(self, user):
-        self.streamingUser=user
     
     def resetStreamingUser(self):
         self.streamingUser=""
+    
+    def setSteamingUser(self, user):
+        self.streamingUser=user
 
     def getDeviceName(self):
         return self.name

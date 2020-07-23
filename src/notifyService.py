@@ -15,10 +15,12 @@ class NotifyService(threading.Thread):
 		self.device=0
 		self.refused=[]
 		threading.Thread.__init__(self)
+		self.name = "notifyService_"+self.username
 		self.appList={"door": Door()} #{"dev.type": IOT_Functions()}
 
 	def run(self):
-		while(not self.device):
+		print("notify started")
+		while(self.device == 0):
 			devs=self.router.listNearDevices(self.username)
 			for dev in devs: 
 				if(not (dev in self.recentDevices)):
@@ -30,21 +32,21 @@ class NotifyService(threading.Thread):
 				if(not (dev in devs)):
 					self.recentDevices.remove(dev)
 			
-
+		print("notify")
 		self.app.startNotify()
-		self.app.setText((40,0), "NOTIFY", 255,self.app.getFonts()[0])
-		self.app.setText((10,20), "FOUND", 255,self.app.getFonts()[0])
-		self.app.setText((10,35), self.device.getDeviceName(), 255,self.app.getFonts()[0])
-		self.app.setText((10,50), "CONNECT?", 255,self.app.getFonts()[0])
-		self.app.sendImg()
-		data=self.app.recvData()
+		self.app.setText((40,0), "NOTIFY", 255,self.app.getFonts()[0], True)
+		self.app.setText((10,20), "FOUND", 255,self.app.getFonts()[0], True)
+		self.app.setText((10,35), self.device.getDeviceName(), 255,self.app.getFonts()[0], True)
+		self.app.setText((10,50), "CONNECT?", 255,self.app.getFonts()[0], True)
+		self.app.sendImg(True)
+		data=self.app.recvData(True)
 		datad_old=data['DOWN']
 		datau_old=data['UP']
 		datas_old=data['SELECT']
 		stop=False
 		accepted=False
 		while(not stop):
-			data=self.app.recvData()
+			data=self.app.recvData(True)
 			if (data['DOWN']!=datad_old):
 				datad_old=data['DOWN']
 				if(not datad_old):

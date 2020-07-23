@@ -65,23 +65,24 @@ while(1):
 
 	elif mac in devices:
 		device = devices[mac]
+		deviceName = device["name"]
 		
 
-		if device in threadAssign and threadAssign[device]["thread"].isAlive():
-			print("resuming DEVICE:", device)
-			threadAssign[device]["thread"].resumeConnection(so)
+		if deviceName in threadAssign and threadAssign[deviceName]["thread"].isAlive():
+			print("resuming DEVICE:", deviceName)
+			threadAssign[deviceName]["thread"].resumeConnection(so)
 			
 		else:
-			if device in threadAssign:
-				print("dead DEVICE", device)
-				threadAssign.pop(device)
-				router.removeDevice(device)
+			if deviceName in threadAssign:
+				print("dead DEVICE", deviceName)
+				threadAssign.pop(deviceName)
+				router.removeDevice(deviceName)
 		
-			print("connecting DEVICE:", device)
-			deviceApp = Application(so, adr, device, router)
+			print("connecting DEVICE:", deviceName)
+			deviceApp = Application(so, adr, deviceName, router)
 			dev = Device(deviceApp, device)
 			dev.start()
-			threadAssign.__setitem__(device, {"thread": dev})
+			threadAssign.__setitem__(deviceName, {"thread": dev})
 			router.addDevice(dev)
 
 	print("Clients connected:", len(threadAssign))

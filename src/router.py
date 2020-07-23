@@ -4,7 +4,7 @@ import json
 class Router:
     def __init__(self):
         self.devices = []
-        self.nearDevices = []
+        self.nearDevices = {}
         self.streamingDevices = []
         self.lastDevices = {}
         
@@ -36,18 +36,23 @@ class Router:
             self.lastDevices[username]=0
 
     def __addNearDevice(self, device, user):
+        if not (user in self.nearDevices):
+            print(user)
+            self.nearDevices.__setitem__(user, [])
+        
         if not (device in self.nearDevices[user]):
             self.nearDevices[user].append(device)
 	
     def __removeNearDevice(self, device, user):
-        if device in self.nearDevices[user]:
-            device.stream=False
-            self.nearDevices[user].remove(device)
+        if user in self.nearDevices:
+            if device in self.nearDevices[user]:
+                device.stream=False
+                self.nearDevices[user].remove(device)
 	
     def __updateNearDevices(self, user):
         for device in self.devices:
             if device.isNear:
-                if device in self.userDevices[user]:
+                if device.name in self.userDevices[user]:
                     self.__addNearDevice(device, user)
             else:
                 self.__removeNearDevice(device, user)
@@ -56,11 +61,13 @@ class Router:
         self.__updateNearDevices(user)
         
         availableDevices = []
-
-        for device in self.nearDevices[user]:
-            if device.streamingUser == "" or device.streamingUser == user:
-                availableDevices.append(device)
+        #print(self.nearDevices)
+        if user in self.nearDevices:
+            for device in self.nearDevices[user]:
+                if device.streamingUser == "" or device.streamingUser == user:
+                    availableDevices.append(device)
         
+        #print(availableDevices)
         return availableDevices
     
     def streamOnDevice(self, dev, user):
