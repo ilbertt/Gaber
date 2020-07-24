@@ -42,7 +42,7 @@ class Application:
 		self.dispList= {"sh1106":0, "ssd1306":1}	
 
 	def __send(self,data):
-		if self.canSend:
+		if (self.canSend and self.alive):
 			self.sc.settimeout(10)
 			try:
 				self.sc.send(data)
@@ -57,18 +57,19 @@ class Application:
 			pass
 
 	def __recv(self):
-		self.sc.settimeout(0.05)
-		try:
-			self.data=int(self.sc.recv(1024))
-			self.recvTime = time.time()
-		except:
-			if time.time() - self.recvTime > 20:
-				print(self.username+": dead")
-				self.sc.close()
-				self.alive=False
-				#sys.exit(0)
-				
-			pass
+		if(self.alive):
+			self.sc.settimeout(0.05)
+			try:
+				self.data=int(self.sc.recv(1024))
+				self.recvTime = time.time()
+			except:
+				if time.time() - self.recvTime > 20:
+					print(self.username+": dead")
+					self.sc.close()
+					self.alive=False
+					#sys.exit(0)
+					
+				pass
 
 		return self.data
 	
