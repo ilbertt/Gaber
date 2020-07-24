@@ -37,6 +37,7 @@ class Application:
 		self.pwmPins= {}
 		self.imgIsNew=False
 		self.notifyStarted=False
+		self.alive=True
 		
 		self.dispList= {"sh1106":0, "ssd1306":1}	
 
@@ -64,6 +65,7 @@ class Application:
 			if time.time() - self.recvTime > 20:
 				print(self.username+": dead")
 				self.sc.close()
+				self.alive=False
 				sys.exit(0)
 				
 			pass
@@ -323,4 +325,7 @@ class Application:
 		self.img=self.imgOld
 		self.config["contrast"] = not self.config["contrast"]
 		self.sendImg()
+
+	def isAlive(self):
+		return self.alive
 		

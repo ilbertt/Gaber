@@ -172,6 +172,9 @@ class Device(threading.Thread):
         self.streamingUser=user
         self.stream = True
 
+    def getStreamingUser(self):
+        return self.streamingUser
+
     def getDeviceName(self):
         return self.name
 

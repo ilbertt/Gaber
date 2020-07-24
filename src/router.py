@@ -63,8 +63,8 @@ class Router:
         #print(self.nearDevices)
         if user in self.nearDevices:
             for device in self.nearDevices[user]:
-                if device.streamingUser == "" or device.streamingUser == user:
-                    availableDevices.append(device)
+                #if device.streamingUser == "" or device.streamingUser == user:
+                availableDevices.append(device)
         
         #print(availableDevices)
         return availableDevices
