@@ -66,7 +66,7 @@ class Application:
 				print(self.username+": dead")
 				self.sc.close()
 				self.alive=False
-				sys.exit(0)
+				#sys.exit(0)
 				
 			pass
 

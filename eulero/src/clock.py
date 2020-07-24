@@ -26,7 +26,7 @@ class Clock:
 		clock_type = "analogic"
 		old_clock_type = ""
 
-		while(not close_app):
+		while((not close_app) and self.app.isAlive()):
 			now = datetime.datetime.now()
 			
 			hour = now.hour

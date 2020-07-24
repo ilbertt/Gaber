@@ -27,7 +27,7 @@ class Weather:
 		datas_old=0
 		next_app=False
 		close_app=False
-		while(not close_app):
+		while((not close_app) and self.app.isAlive()):
 			t=time.localtime()
 			m=t.tm_min
 			if(m!=self.min_old):

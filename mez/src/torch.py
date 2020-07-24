@@ -19,7 +19,7 @@ class Torch:
 		second_column = False
 		next_app=False
 		close_app=False
-		while(not close_app):
+		while((not close_app) and self.app.isAlive()):
 			if (change):
 					change=False
 					self.app.newImg()

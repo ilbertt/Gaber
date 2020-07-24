@@ -38,7 +38,7 @@ class Main(threading.Thread):
         applications_name=["CLOCK","TORCH", "WEATHER","STREAM","ROULETTE","SETTINGS"]
         applications=[Clock(self.app), Torch(self.app), Weather(self.app), Stream(self.app), ProfilePic(self.app), Settings(self.app)]
         menu=Menu(self.app, applications_name)
-        while(1):
+        while(self.app.isAlive()):
             if(self.i==-1):
                 self.i=menu.run()
             else:
@@ -49,5 +49,8 @@ class Main(threading.Thread):
         self.app.getPinConfig("gaber/src/config/pinout.json")
         self.app.resumeImg()
         print("resumed")
+
+    def isRunning(self):
+        return self.app.isAlive()
 
 

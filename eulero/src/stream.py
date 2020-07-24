@@ -22,7 +22,7 @@ class Stream:
 		sec_old = -1
 		counter = 0
 
-		while(not close_app):
+		while((not close_app) and self.app.isAlive()):
 			if (change or old_avail_devices!=len(avail_devices)):
 				change=False
 				old_avail_devices = len(avail_devices)

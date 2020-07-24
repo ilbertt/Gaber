@@ -12,7 +12,7 @@ class Settings:
 		datas_old=0
 		next_app=False
 		i=0
-		while(not close_app):
+		while((not close_app) and self.app.isAlive()):
 			if (change):
 				change=False
 				self.app.newImg()
@@ -49,7 +49,6 @@ class Settings:
 				datas_old=data['SELECT']
 				if(datas_old):
 					if(i==2):
-						i_tmp=i
 						next_app=True
 					elif(i==1):
 						self.rotation = not self.rotation

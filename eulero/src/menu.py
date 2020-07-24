@@ -8,7 +8,7 @@ class Menu:
 	def run(self, firstApp=-1):
 		if firstApp >= 0:
 			self.applications[firstApp][1].run()
-		heigth=self.app.heigth
+		#heigth=self.app.heigth
 		width=self.app.width
 		##self.app=Application("192.168.0.104", 1234, heigth,width)
 		n=int(width/10)-1
@@ -22,7 +22,7 @@ class Menu:
 		i_tmp=0
 		page=1
 		close_app=False
-		while(not close_app):
+		while((not close_app) and self.app.isAlive()):
 			if (changed):
 				self.app.newImg()
 				self.app.setText((45,0),"MENU "+str(page)+"\\"+str(pages), 255,self.app.getFonts()[0])

@@ -21,7 +21,7 @@ class Clock:
 		clock_type = "digital"
 		old_clock_type = ""
 		close_app=False
-		while(not close_app):
+		while((not close_app) and self.app.isAlive()):
 			now = datetime.datetime.now()
 			hour = now.hour
 			min = now.minute

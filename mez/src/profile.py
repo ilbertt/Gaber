@@ -22,7 +22,7 @@ class ProfilePic:
 		self.app.sendImg()
 		i = 1
 		pause = False
-		while(not close_app):
+		while((not close_app) and self.app.isAlive()):
 			if time.time() - img_time > 3 and not pause:
 				self.app.setImg(pics[i])
 				self.app.sendImg()

@@ -39,7 +39,7 @@ class Main(threading.Thread):
         applications_name=["CLOCK","STREAM", "SERVO", "ROULETTE", "TORCH", "WEATHER", "SETTINGS"]
         applications=[Clock(self.app), Stream(self.app), Servo(self.app), ProfilePic(self.app), Torch(self.app), Weather(self.app),Settings(self.app)]
         menu=Menu(self.app, applications_name)
-        while(1):
+        while(self.app.isAlive()):
             if(self.i==-1):
                 self.i=menu.run()
             else:
