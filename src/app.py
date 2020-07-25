@@ -100,6 +100,7 @@ class Application:
 
 	def changeSocket(self, sc):
 		print("changing socket...")
+		self.recvTime = time.time()
 		self.canSend = False
 		self.sc=sc
 

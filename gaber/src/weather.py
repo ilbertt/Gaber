@@ -14,8 +14,8 @@ class Weather:
 
 	def run(self):
 		ip=self.app.getIpAddress()
-		lat=45.7513025
-		lon=9.0308275
+		lat=45.4514346
+		lon=9.1506165
 		if not ("192.168" in ip):
 			response = DbIpCity.get(ip, api_key='free')
 			lat=response.latitude
