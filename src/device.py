@@ -72,6 +72,8 @@ class Device(threading.Thread):
                 datap_old=self.data['PROXIMITY']
                 if(datap_old):
                     self.isNear=not self.isNear
+
+        self.stream=False
     
     def resumeConnection(self, so):
         self.__app.changeSocket(so)
