@@ -79,11 +79,7 @@ class NotifyService(threading.Thread):
 
 				if(accepted):
 					if devType == "screen":
-						self.appList[devType].setDevice(self.device)
-						if not self.appList[devType].started:
-							self.appList[devType].start()
-						else:
-							self.appList[devType].handleStreaming(self.device)
+						self.appList[devType].handleStreaming(self.device)
 					else:
 						self.appList[devType].run(self.device)
 
