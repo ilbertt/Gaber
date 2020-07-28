@@ -1,8 +1,9 @@
 from PIL   				import Image
 import time
 import threading
-from src.iot_funct.door import  Door
 from numpy.random 		import randint
+from src.iot_funct.door import  Door
+from src.iot_funct.screen import  Screen
 #from application import Application
 
 class NotifyService(threading.Thread):
@@ -14,8 +15,11 @@ class NotifyService(threading.Thread):
 		self.recentDevices=[]
 		#self.nearDeavices=[]
 		self.device=0
-		self.name = "notifyService_"+self.username
-		self.appList={"door": Door()} #{"dev.type": IOT_Functions()}
+		self.name = self.username+"_notifyService"
+		self.appList={
+			"door": Door(),
+			"screen": Screen(self.username, self.device)
+			} #{"dev.type": IOT_Functions()}
 
 	def run(self):
 		print(self.app.username+": notify started")
@@ -37,8 +41,10 @@ class NotifyService(threading.Thread):
 				self.app.setNeopixel(color, -1, True)
 				self.app.setText((40,0), "NOTIFY", 255,self.app.getFonts()[0], True)
 				self.app.setText((10,20), "FOUND", 255,self.app.getFonts()[0], True)
+
+				devType = self.device.getDeviceType()
 				
-				notifMsg = self.appList[self.device.getDeviceType()].getNotificationMessage(self.device)
+				notifMsg = self.appList[devType].getNotificationMessage(self.device)
 				for line in notifMsg:
 					self.app.setText(line[0], line[1], 255,self.app.getFonts()[0], True)
 
@@ -72,7 +78,14 @@ class NotifyService(threading.Thread):
 						stop = True
 
 				if(accepted):
-					self.appList[self.device.getDeviceType()].run(self.device)
+					if devType == "screen":
+						self.appList[devType].setDevice(self.device)
+						if not self.appList[devType].started:
+							self.appList[devType].start()
+						else:
+							self.appList[devType].handleStreaming(self.device)
+					else:
+						self.appList[devType].run(self.device)
 
 				self.app.setNeopixel([0, 0, 0], -1, True)
 				self.app.stopNotify()

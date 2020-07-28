@@ -1,4 +1,5 @@
 import threading
+import time
 
 class Device(threading.Thread):
     def __init__(self, app, device):
@@ -24,7 +25,9 @@ class Device(threading.Thread):
         datap_old=0
         disc=False
         self.newImg()
+
         while(self.__app.isAlive()):
+
             if (self.stream and self.isNear):
                 if(self.sendType=="image"):
                     self.data=self.__app.sendImg_and_recvData()
@@ -182,3 +185,4 @@ class Device(threading.Thread):
 
     def getDeviceType(self):
         return self.type
+    
