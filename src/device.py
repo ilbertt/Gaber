@@ -54,7 +54,7 @@ class Device(threading.Thread):
                     self.adcvalue=self.__app.readAdc(self.arguments[0],self.arguments[1])
                     self.sendType=""
                 elif(self.sendType=="setdisplay"):
-                    self.__app.setPwm(self.arguments[0],self.arguments[1], self.arguments[2], self.arguments[3], self.arguments[4])
+                    self.__app.setDisplay(self.arguments[0],self.arguments[1], self.arguments[2], self.arguments[3], self.arguments[4])
                     self.arguments=[]
                     self.sendType=""
                 else:
