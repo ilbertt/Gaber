@@ -6,13 +6,18 @@
     },
     "out": {
     },
-    "neopixel":{
-    },
     "display":{
         "heigth":128,
         "width":64,
         "sda": 21,
         "scl": 22,
         "type": "ssd1306"
+    },
+    "nfc": {
+        "sclk":18,
+        "mosi":23,
+        "miso":19,
+        "rst":4,
+        "sda":2
     }
 }
