@@ -2,11 +2,11 @@ import threading
 import time
 
 class Device(threading.Thread):
-    def __init__(self, app, device):
+    def __init__(self, app, deviceData):
         self.__app=app
         threading.Thread.__init__(self)
-        self.name=device["name"]
-        self.type=device["class"]
+        self.name=deviceData["name"]
+        self.type=deviceData["class"]
         self.isNear=False
         self.stream = False
         self.streamingUser = ""
@@ -70,6 +70,7 @@ class Device(threading.Thread):
                 self.nfc=self.__app.readNFC()
 
             #TODO: check nfc tag  
+            
 
             #print(self.data)	
             """if (self.data['PROXIMITY']!=datap_old):

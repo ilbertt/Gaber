@@ -92,8 +92,8 @@ def run(so):
             mosi=s%100
             s=int(s/100)
             sclk=s%100
-            import mfrc522
-            rdr=mfrc522.MFRC522(sclk, mosi,miso,rst,sda)
+            from mfrc522 import MFRC522
+            rdr=MFRC522(sclk, mosi,miso,rst,sda)
 
         elif(len(s)==11): # set Neopixel
             s=int(s)
@@ -112,7 +112,6 @@ def run(so):
         
         elif(len(s)==12): #set Display
             s=s.decode()
-            print(s)
             disp=int(s[-2:])
             s=s[:-2]
             s=int(s)

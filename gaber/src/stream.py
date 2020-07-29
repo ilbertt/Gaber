@@ -16,7 +16,7 @@ class Stream:
 		next_app=False
 		#devices = self.app.router.devices
 
-		avail_devices = self.app.router.listNearDevices(self.app.username)
+		avail_devices = self.app.router.listNearDevices(self.app.getUsername())
 		old_avail_devices = 0
 
 		sec_old = -1
@@ -44,7 +44,7 @@ class Stream:
 			else:
 				data=self.app.recvData()
 			
-			avail_devices = self.app.router.listNearDevices(self.app.username)
+			avail_devices = self.app.router.listNearDevices(self.app.getUsername())
 
 
 			if (data['DOWN']!=datad_old):
@@ -75,7 +75,7 @@ class Stream:
 						next_app=True
 					else:
 						dev = avail_devices[i]
-						self.dev = self.app.router.streamOnDevice(dev, self.app.username)
+						self.dev = self.app.router.streamOnDevice(dev, self.app.getUsername())
 						change=True
 			
 			sec = datetime.datetime.now().second
@@ -90,7 +90,7 @@ class Stream:
 			if (next_app and data['SELECT']==0):
 				next_app=False
 				if self.dev:
-					self.app.router.streamOnDevice(self.dev, self.app.username)
+					self.app.router.streamOnDevice(self.dev, self.app.getUsername())
 				
 				close_app=True
 

@@ -39,12 +39,14 @@ while(1):
 	mac=so.recv(1024)
 	mac=binascii.hexlify(mac).decode()
 	print(mac)
-
+	
 	username = ''
 	device = ''
 
 	if mac in users:
-		username=users[mac]
+		userData = users[mac]
+		username = userData["name"]
+
 
 		if username in threadAssign and threadAssign[username]["thread"].isAlive():
 			print("resuming USER:", username)
@@ -57,15 +59,15 @@ while(1):
 
 			print("connecting USER:", username)
 			UserMain = getattr(importlib.import_module(username+".main"), "Main")
-			app = Application(so, adr, username, router)
+			app = Application(so, adr, userData, router)
 			user=UserMain(app)
 
 			threadAssign.__setitem__(username, {"thread": user})
 			user.start()
 
 	elif mac in devices:
-		device = devices[mac]
-		deviceName = device["name"]
+		deviceData = devices[mac]
+		deviceName = deviceData["name"]
 		
 
 		if deviceName in threadAssign and threadAssign[deviceName]["thread"].isAlive():
@@ -79,8 +81,8 @@ while(1):
 				router.removeDevice(deviceName)
 		
 			print("connecting DEVICE:", deviceName)
-			deviceApp = Application(so, adr, deviceName, router)
-			dev = Device(deviceApp, device)
+			deviceApp = Application(so, adr, deviceData, router)
+			dev = Device(deviceApp, deviceData)
 			dev.start()
 			threadAssign.__setitem__(deviceName, {"thread": dev})
 			router.addDevice(dev)

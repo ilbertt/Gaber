@@ -17,7 +17,7 @@ class Main(threading.Thread):
         self.app=app
         self.i=0
         threading.Thread.__init__(self)
-        self.name = self.app.username
+        self.name = self.app.getUsername()
     
     def run(self):
         self.app.getPinConfig("eulero/src/config/pinout.json")

@@ -11,7 +11,7 @@ class NotifyService(threading.Thread):
 		threading.Thread.__init__(self)
 		self.app=app
 		self.router=router
-		self.username=self.app.username
+		self.username=self.app.getUsername()
 		self.recentDevices=[]
 		#self.nearDeavices=[]
 		self.device=0
@@ -22,7 +22,7 @@ class NotifyService(threading.Thread):
 			} #{"dev.type": IOT_Functions()}
 
 	def run(self):
-		print(self.app.username+": notify started")
+		print(self.app.getUsername()+": notify started")
 		while (self.app.isAlive()):
 			devs=self.router.listNearDevices(self.username)
 			for dev in devs: 
