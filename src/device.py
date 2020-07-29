@@ -14,6 +14,7 @@ class Device(threading.Thread):
         self.arguments=[]
         self.data={}
         self.adcvalue=0
+        self.nfc=''
         self.customParams = {}
 
 
@@ -22,7 +23,7 @@ class Device(threading.Thread):
         self.__app.getConfig("src/iot/"+self.name+"/config.json")
         self.customParams = self.__app.config["custom"]
 
-        datap_old=0
+        #datap_old=0
         disc=False
         self.newImg()
 
@@ -64,17 +65,17 @@ class Device(threading.Thread):
                     disc=False
                     self.sendType=""
                     self.__app.newImg()
-                    self.data=self.__app.sendImg_and_recvData()
-                else:
-                    self.data=self.__app.recvData()
+                    self.__app.sendImg()
 
-                
+                self.nfc=self.__app.readNFC()
+
+            #TODO: check nfc tag  
 
             #print(self.data)	
-            if (self.data['PROXIMITY']!=datap_old):
+            """if (self.data['PROXIMITY']!=datap_old):
                 datap_old=self.data['PROXIMITY']
                 if(datap_old):
-                    self.isNear=not self.isNear
+                    self.isNear=not self.isNear"""
 
         self.stream=False
     

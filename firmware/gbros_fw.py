@@ -10,23 +10,28 @@ def run(so):
     oled_heigth = -1
     oled = 0
     adc=0
-    send_data=True
+    send_type=0 # 0: data, 1: nfc, 2: adc
     so.settimeout(0.05)
     disp=False
     data=b''
+    rdr=0
+    nfc='0'
     while(1):
         #so.setsockopt(socket.TCP_NODELAY,1)
         msg=0
-        if(send_data):
+        if(send_type==0):
             for p in pin_in:
                 msg += ((not Pin(p, Pin.IN, Pin.PULL_UP).value())<<p)
 
         try:
-            if(send_data):
+            if(send_type==0):
                 so.send(str(msg).encode())
-            else:
+            elif(send_type==1):
+                so.send(str(nfc).encode())
+            elif(send_type==2):
                 so.send(str(adc).encode())
-                send_data=True
+
+            send_type=0
         except:
             import machine
             machine.reset()
@@ -39,24 +44,34 @@ def run(so):
         
         d=s
         print(len(s))
-        if(len(s)==2):
+        if(len(s)==1): # send NFC
+            nfc='0'
+            send_type=1
+            if(rdr):
+                (stat, _ ) = rdr.request(rdr.REQIDL)
+                if stat == rdr.OK:
+                    (stat, raw_uid) = rdr.anticoll()
+                    if stat == rdr.OK:
+                        nfc="%02x%02x%02x%02x" % (raw_uid[0], raw_uid[1], raw_uid[2], raw_uid[3])
+
+        elif(len(s)==2): # set Input Pin
             if( not ( int(s) in pin_in)):
                 pin_in.append(int(s))
    
-        elif(len(s)==3):
+        elif(len(s)==3): # set Output Pin
             pin = int(int(s)/10)
             Pin(pin, Pin.OUT).value(int(s)%10)
             if pin in pin_in:
                 pin_in.remove(pin)
 
-        if(len(s)==4):
+        if(len(s)==4): # read ADC
             pin=int(s)
             adc=ADC(pin)
-            send_data=False
+            send_type=2
             if pin in pin_in:
                 pin_in.remove(pin)
                 
-        elif(len(s)==9):
+        elif(len(s)==9): # set PWM
             s=int(s)
             duty=s%10000
             s=int(s/10000)
@@ -66,7 +81,21 @@ def run(so):
             if pin in pin_in:
                 pin_in.remove(pin)    
                     
-        elif(len(s)==11):
+        elif(len(s)==10): # set NFC
+            s=int(s)
+            sda=s%100
+            s=int(s/100)
+            rst=s%100
+            s=int(s/100)
+            miso=s%100
+            s=int(s/100)
+            mosi=s%100
+            s=int(s/100)
+            sclk=s%100
+            import mfrc522
+            rdr=mfrc522.MFRC522(sclk, mosi,miso,rst,sda)
+
+        elif(len(s)==11): # set Neopixel
             s=int(s)
             val=[0,0,0]
             val[2]=(s%1000)
@@ -81,7 +110,7 @@ def run(so):
             if pin in pin_in:
                 pin_in.remove(pin)
         
-        elif(len(s)==12):
+        elif(len(s)==12): #set Display
             s=s.decode()
             print(s)
             disp=int(s[-2:])
@@ -103,7 +132,7 @@ def run(so):
                 from ssd1306 import SSD1306_I2C
                 oled = SSD1306_I2C(oled_width, oled_heigth, i2c)
         
-        if(len(d)==int(oled_heigth*oled_width)/16):
+        if(len(d)==int(oled_heigth*oled_width)/16): # recv Display Image
             disp= not disp
             if(not disp):
                 data=data+d

@@ -38,7 +38,6 @@ class Application:
 		self.imgIsNew=False
 		self.notifyStarted=False
 		self.alive=True
-		
 		self.dispList= {"sh1106":0, "ssd1306":1}	
 
 	def __send(self,data):
@@ -72,6 +71,18 @@ class Application:
 				pass
 
 		return self.data
+
+	def __recvNFC(self):
+		data='0'
+		if(self.alive):
+			self.sc.settimeout(1.5)
+			try:
+				data=self.sc.recv(1024).decode()
+				self.recvTime = time.time()
+			except:
+				pass
+
+		return data
 	
 	def appSleep(self, recvNumber, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
@@ -96,6 +107,10 @@ class Application:
 				self.heigth=tmp["display"]["heigth"]
 				self.width=tmp["display"]["width"]
 				self.setDisplay(tmp["display"]["sda"], tmp["display"]["scl"], self.heigth, self.width, tmp["display"]["type"])
+
+			if ("nfc" in tmp):
+				self.setNFC(tmp["nfc"]["sclk"],tmp["nfc"]["mosi"],tmp["nfc"]["miso"],tmp["nfc"]["rst"],tmp["nfc"]["sda"])
+		
 		self.canSend = True
 
 	def changeSocket(self, sc):
@@ -155,6 +170,25 @@ class Application:
 			self.__send(str(pin).zfill(4))
 			time.sleep(0.01)
 			data=int(self.__recv())%resolution
+			self.__send(b'')
+
+		time.sleep(0.01)
+		return data
+
+	def setNFC(self, sclk, mosi, miso, rst, sda, notify=True):
+		if((self.notifyStarted and notify) or (not self.notifyStarted)):
+			self.__recv()
+			self.__sendc((str(sclk).zfill(2)+str(mosi).zfill(2)+str(miso).zfill(3)+str(rst).zfill(3)+str(sda).zfill(2)).encode())
+		
+		time.sleep(0.01)
+
+	def readNFC(self, notify=False):
+		data='0'
+		if((self.notifyStarted and notify) or (not self.notifyStarted)):
+			self.__recv()
+			self.__send(b'1')
+			time.sleep(0.01)
+			data=self.__recvNFC()
 			self.__send(b'')
 
 		time.sleep(0.01)

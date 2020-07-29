@@ -1,11 +1,15 @@
 {
     "in":{
-        "PROXIMITY": {
-            "number": 19
-        }
     },
     "out": {
     },
     "neopixel":{
+    },
+    "nfc": {
+        "sclk":0,
+        "mosi":0,
+        "miso":0,
+        "rst":0,
+        "sda":0
     }
 }
