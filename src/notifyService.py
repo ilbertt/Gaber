@@ -4,6 +4,7 @@ import threading
 from numpy.random 		import randint
 from src.iot_funct.door import  Door
 from src.iot_funct.screen import  Screen
+from src.iot_funct.led	import Led
 #from application import Application
 
 class NotifyService(threading.Thread):
@@ -18,7 +19,8 @@ class NotifyService(threading.Thread):
 		self.name = self.username+"_notifyService"
 		self.appList={
 			"door": Door(),
-			"screen": Screen(self.username, self.device)
+			"screen": Screen(self.username, self.device),
+			"led": Led()
 			} #{"dev.type": IOT_Functions()}
 
 	def run(self):

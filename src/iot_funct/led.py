@@ -1,13 +1,13 @@
-class Door:
+class Led:
 
     def __init__(self):
         self.state = False
 
-    def openDoor(self, device):
-        device.setPwm(4, 50, 100)
+    def ledOn(self, device):
+        device.setOutPin(16, 0)
 
-    def closeDoor(self, device):  
-        device.setPwm(4, 50, 30)
+    def ledOff(self, device):  
+        device.setOutPin(16, 1)
 
     def getNotificationMessage(self, device, username=None):
         custom = device.getCustomParams()
@@ -18,9 +18,9 @@ class Door:
         msg = []
 
         msg.append([(10, 35), device.getName().replace("_", " ").upper()])
-        msg_status = "OPEN?"
+        msg_status = "TURN ON?"
         if self.state:
-            msg_status = "CLOSE?"
+            msg_status = "TURN OFF?"
         
         msg.append([(10,50), msg_status])
 
@@ -30,9 +30,9 @@ class Door:
     def run(self, device):
         self.state = not self.state
         if not self.state:
-            self.closeDoor(device)
+            self.ledOff(device)
         else:
-            self.openDoor(device)
+            self.ledOn(device)
         
         device.setCustomParams({"state": self.state})
         

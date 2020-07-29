@@ -1,7 +1,7 @@
 {
     "246f28b07d30": {
-                        "name" : "front_door",
-                        "class" : "door"
+                        "name" : "light",
+                        "class" : "led"
                     },
 
     "98f4ab68fad8": {

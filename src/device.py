@@ -70,7 +70,8 @@ class Device(threading.Thread):
                 self.nfc=self.__app.readNFC()
 
             #TODO: check nfc tag  
-            
+            if self.nfc != '0':
+                self.isNear = True
 
             #print(self.data)	
             """if (self.data['PROXIMITY']!=datap_old):
@@ -165,6 +166,12 @@ class Device(threading.Thread):
     def setContrast(self, contrast):
         self.__app.setContrast(contrast)
 
+    def setCustomParams(self, customParams):
+        self.__app.setCustomParams(customParams)
+    
+    def getCustomParams(self):
+        return self.__app.getCustomParams()
+
     def setText(self,pos,txt, txt_color, txt_font):
         self.__app.setText(pos, txt, txt_color, txt_font)
 
@@ -174,6 +181,7 @@ class Device(threading.Thread):
     def resetStreamingUser(self):
         self.streamingUser=""
         self.stream = False
+        self.isNear=False
     
     def setStreamingUser(self, user):
         self.streamingUser=user
@@ -188,3 +196,5 @@ class Device(threading.Thread):
     def getDeviceType(self):
         return self.type
     
+    def getNFC(self):
+        return self.nfc
