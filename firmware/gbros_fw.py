@@ -1,3 +1,4 @@
+# firmware v 0.2.1
 from machine import Pin, I2C, PWM, ADC
 import neopixel
 import socket
@@ -52,7 +53,7 @@ def run(so):
                 if stat == rdr.OK:
                     (stat, raw_uid) = rdr.anticoll()
                     if stat == rdr.OK:
-                        nfc="%02x%02x%02x%02x" % (raw_uid[0], raw_uid[1], raw_uid[2], raw_uid[3])
+                        nfc=":%02x%02x%02x%02x:" % (raw_uid[0], raw_uid[1], raw_uid[2], raw_uid[3])
 
         elif(len(s)==2): # set Input Pin
             if( not ( int(s) in pin_in)):
@@ -82,9 +83,9 @@ def run(so):
                 pin_in.remove(pin)    
                     
         elif(len(s)==10): # set NFC
-            s=int(s)
-            sda=s%100
-            s=int(s/100)
+            s=s.decode()
+            sda=int(s[-2:])
+            s=int(s[:-2])
             rst=s%100
             s=int(s/100)
             miso=s%100
