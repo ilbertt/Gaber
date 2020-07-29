@@ -6,9 +6,7 @@ class Router:
         self.devices = []
         self.nearDevices = {}
         self.streamingDevices = []
-        self.lastDevices = {}
-        
-        self.users = []
+        self.users = {}
 
         with open("src/userDevices.json", "r") as rf:
             self.userDevices = json.load(rf)
@@ -21,19 +19,11 @@ class Router:
             self.devices.remove(device)
     
     def addUser(self, user):
-        self.users.append(user)
+        self.users.__setitem__(user["name"], user["uid"])
     
-    def removeUser(self, user):
-        if user in self.users:
-            self.users.remove(user)
-    
-    def getLastDevice(self, username):
-        if username in self.lastDevices:
-            return self.lastDevices[username]
-    
-    def resetLastDevice(self, username):
-        if username in self.lastDevices:
-            self.lastDevices[username]=0
+    def removeUser(self, username):
+        if username in self.users:
+            self.users.pop(username)
 
     def __addNearDevice(self, device, user):
         if not (user in self.nearDevices):
@@ -51,8 +41,9 @@ class Router:
     def __updateNearDevices(self, user):
         for device in self.devices:
             if device.isNear:
-                if device.name in self.userDevices[user]:
-                    self.__addNearDevice(device, user)
+                if device.getNFC() == self.users[user]:
+                    if device.name in self.userDevices[user]:
+                        self.__addNearDevice(device, user)
             else:
                 self.__removeNearDevice(device, user)
 

@@ -56,11 +56,13 @@ while(1):
 			if username in threadAssign:
 				print("dead USER", username)
 				threadAssign.pop(username)
+				router.removeUser(username)
 
 			print("connecting USER:", username)
 			UserMain = getattr(importlib.import_module(username+".main"), "Main")
 			app = Application(so, adr, userData, router)
 			user=UserMain(app)
+			router.addUser(userData)
 
 			threadAssign.__setitem__(username, {"thread": user})
 			user.start()
