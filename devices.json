@@ -12,5 +12,9 @@
     "2462abcab9ac": {
                         "name" : "tv_livingroom",
                         "class" : "screen"
+    },
+    "500291dedb70": {
+        "name": "back_door",
+        "class": "door"
     }
 }

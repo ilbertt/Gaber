@@ -1,5 +1,14 @@
 {
-    "c82b960953ca":"gaber",
-    "c82b9609534c":"eulero",
-    "c82b96095354":"mez"
+    "c82b960953ca":{
+        "name":"gaber",
+        "uid":"b0cec732"
+    },
+    "c82b9609534c":{
+        "name":"eulero",
+        "uid":"e9c29cb8"
+    },
+    "c82b96095354":{
+        "name":"mez",
+        "uid":""
+    }
 }

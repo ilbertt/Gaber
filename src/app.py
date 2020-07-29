@@ -6,11 +6,11 @@ import sys
 
 class Application:
 
-	def __init__(self, sc, address, username, router=None):
+	def __init__(self, sc, address, userData, router=None):
 		self.heigth=0
 		self.width=0
 		self.address=address
-		self.username = username
+		self.userData = userData
 
 		self.router = router
 
@@ -63,7 +63,7 @@ class Application:
 				self.recvTime = time.time()
 			except:
 				if time.time() - self.recvTime > 20:
-					print(self.username+": dead")
+					print(self.getUsername()+": dead")
 					self.sc.close()
 					self.alive=False
 					#sys.exit(0)
@@ -81,7 +81,14 @@ class Application:
 				self.recvTime = time.time()
 			except:
 				pass
-
+		if(data!='0'):
+			data=data.split(":")
+			if(len(data)>=2):
+				data=data[1]
+				if(not len(data)==8):
+					data='0'
+			
+		
 		return data
 	
 	def appSleep(self, recvNumber, notify=False):
@@ -100,8 +107,9 @@ class Application:
 			if("pwm" in tmp):
 				self.pwmPins= tmp["pwm"]
 
-			for neo in tmp["neopixel"]:
-				self.setNeoPin(tmp["neopixel"][neo]["number"])
+			if ("neopixel" in tmp):
+				for neo in tmp["neopixel"]:
+					self.setNeoPin(tmp["neopixel"][neo]["number"])
 
 			if ("display" in tmp):
 				self.heigth=tmp["display"]["heigth"]
@@ -112,6 +120,13 @@ class Application:
 				self.setNFC(tmp["nfc"]["sclk"],tmp["nfc"]["mosi"],tmp["nfc"]["miso"],tmp["nfc"]["rst"],tmp["nfc"]["sda"])
 		
 		self.canSend = True
+
+	def getUsername(self):
+		return self.userData["name"]
+	
+	def getUid(self):
+		if "uid" in self.userData:
+			return self.userData["uid"]
 
 	def changeSocket(self, sc):
 		print("changing socket...")
@@ -178,7 +193,7 @@ class Application:
 	def setNFC(self, sclk, mosi, miso, rst, sda, notify=True):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			self.__recv()
-			self.__sendc((str(sclk).zfill(2)+str(mosi).zfill(2)+str(miso).zfill(3)+str(rst).zfill(3)+str(sda).zfill(2)).encode())
+			self.__sendc((str(sclk).zfill(2)+str(mosi).zfill(2)+str(miso).zfill(2)+str(rst).zfill(2)+str(sda).zfill(2)).encode())
 		
 		time.sleep(0.01)
 
