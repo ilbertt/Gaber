@@ -337,6 +337,18 @@ class Application:
 				with open(self.confpath, "w") as rf:
 					json.dump(self.config, rf)
 
+	def setCustomParams(self, customParams):
+		self.config["custom"] = customParams
+		if(self.confpath):
+			with open(self.confpath, "w") as rf:
+				json.dump(self.config, rf)
+	
+	def getCustomParams(self):
+		if(self.confpath):
+			with open(self.confpath, "r") as rf:
+				tmp = json.load(rf)
+				return tmp["custom"]
+
 	def getFonts(self):
 		return self.fonts
 
