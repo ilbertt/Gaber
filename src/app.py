@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 import time
 import json
 import sys
+import struct
 
 class Application:
 
@@ -35,29 +36,35 @@ class Application:
 		self.inPins = {}
 		self.outPins = {}
 		self.pwmPins= {}
+		self.I2CPins = {}
 		self.imgIsNew=False
 		self.notifyStarted=False
 		self.alive=True
 		self.dispList= {"sh1106":0, "ssd1306":1}	
+	
+	def send_msg(self, msg):
+		# Prefix each message with a 4-byte length (network byte order)
+		msg = struct.pack('>I', len(msg)) + msg
+		self.sc.sendall(msg)
 
 	def __send(self,data):
 		if (self.canSend and self.alive):
-			self.sc.settimeout(10)
+			#self.sc.settimeout(0)
 			try:
-				self.sc.send(data)
+				self.send_msg(data)
 			except:
 				pass
 	
 	def __sendc(self, data):
-		self.sc.settimeout(10)
+		#self.sc.settimeout(10)
 		try:
-			self.sc.send(data)
+			self.send_msg(data)
 		except:
 			pass
 
 	def __recv(self):
 		if(self.alive):
-			self.sc.settimeout(0.05)
+			#self.sc.settimeout(0.05)
 			try:
 				self.data=int(self.sc.recv(1024))
 				self.recvTime = time.time()
@@ -75,7 +82,7 @@ class Application:
 	def __recvNFC(self):
 		data='0'
 		if(self.alive):
-			self.sc.settimeout(1.5)
+			#self.sc.settimeout(1)
 			try:
 				data=self.sc.recv(1024).decode()
 				self.recvTime = time.time()
@@ -91,12 +98,26 @@ class Application:
 		
 		return data
 	
+	def __recvI2C(self,nbytes):
+		data='0'
+		if(self.alive):
+			#self.sc.settimeout(1)
+			try:
+				data=self.sc.recv(nbytes)
+				print(data)
+				#data.decode()
+				self.recvTime = time.time()
+			except:
+				pass			
+		
+		return data
+	
 	def appSleep(self, recvNumber, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			for _ in range(recvNumber):
 				self.recvData()
-		else:
-			time.sleep(0.01)
+		#else:
+			#time.sleep(0.01)
 
 	def getPinConfig(self, path):
 		with open(path, "r") as rf:
@@ -118,6 +139,9 @@ class Application:
 
 			if ("nfc" in tmp):
 				self.setNFC(tmp["nfc"]["sclk"],tmp["nfc"]["mosi"],tmp["nfc"]["miso"],tmp["nfc"]["rst"],tmp["nfc"]["sda"])
+			
+			if ("i2c" in tmp):
+				self.I2CPins = tmp["i2c"]
 		
 		self.canSend = True
 
@@ -152,14 +176,14 @@ class Application:
 			self.__recv()
 			self.__send(str(pin*10+int(not value)).zfill(3).encode())
 
-		time.sleep(0.01)
+		#time.sleep(0.01)
 
 	def setInPin(self, pin, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			self.__recv()
 			self.__sendc(str(pin).zfill(2).encode())
 
-		time.sleep(0.01)
+		#time.sleep(0.01)
 
 	def setDisplay(self, sda, scl, heigth, width, dispType, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
@@ -169,25 +193,25 @@ class Application:
 			self.__recv()
 			self.__sendc((str(sda).zfill(2)+str(scl).zfill(2)+str(heigth).zfill(3)+str(width).zfill(3)+str(disp).zfill(2)).encode())
 		
-		time.sleep(0.01)
+		#time.sleep(0.01)
 
 	def setPwm(self, pin, freq, duty, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			self.__recv()
 			self.__send((str(pin).zfill(2)+str(freq).zfill(3)+str(duty).zfill(4)).encode())
 		
-		time.sleep(0.01)
+		#time.sleep(0.01)
 
 	def readAdc(self, pin, resolution=1024, notify=False):
 		data=0
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			self.__recv()
 			self.__send(str(pin).zfill(4))
-			time.sleep(0.01)
+			#time.sleep(0.01)
 			data=int(self.__recv())%resolution
 			self.__send(b'')
 
-		time.sleep(0.01)
+		#time.sleep(0.01)
 		return data
 
 	def setNFC(self, sclk, mosi, miso, rst, sda, notify=True):
@@ -195,18 +219,30 @@ class Application:
 			self.__recv()
 			self.__sendc((str(sclk).zfill(2)+str(mosi).zfill(2)+str(miso).zfill(2)+str(rst).zfill(2)+str(sda).zfill(2)).encode())
 		
-		time.sleep(0.01)
+		#time.sleep(0.01)
+	
+	def readI2C(self, addr, nbytes, notify=False):
+		data = ''
+		if((self.notifyStarted and notify) or (not self.notifyStarted)):
+			self.__recv()
+			sda = self.I2CPins["sda"]
+			scl = self.I2CPins["scl"]
+			self.__sendc((str(sda).zfill(2)+str(scl).zfill(2)+str(addr).zfill(2)+str(nbytes).zfill(2)).encode())
+			data = self.__recvI2C(nbytes)
+			self.__send(b'')
+		
+		return data
 
 	def readNFC(self, notify=False):
 		data='0'
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			self.__recv()
 			self.__send(b'1')
-			time.sleep(0.01)
+			#time.sleep(0.01)
 			data=self.__recvNFC()
 			self.__send(b'')
 
-		time.sleep(0.01)
+		#time.sleep(0.01)
 		return data
 		
 	def setNeopixel(self, status, pin=-1, notify=False):
@@ -220,7 +256,7 @@ class Application:
 				else:
 					self.__send(b'')
 
-		time.sleep(0.01)
+		#time.sleep(0.01)
 
 	def recvData(self, notify=False):
 		data=0
@@ -234,7 +270,7 @@ class Application:
 			else:
 				buttons[pin]=0
 
-		time.sleep(0.01)
+		#time.sleep(0.01)
 		#print(self.buttons)
 		return buttons
 
@@ -259,14 +295,16 @@ class Application:
 			#time.sleep(0.05)
 			if(self.heigth and self.width and self.imgIsNew):
 				self.imgIsNew=False
-				l=int(len(pic)/2)
+				self.__send(pic)
+				self.__recv()
+				'''l=int(len(pic)/2)
 				self.__send(pic[:l])
-				time.sleep(0.01)
+				#time.sleep(0.01)
 				self.__recv()
-				self.__send(pic[l:])
-				time.sleep(0.01)
+				self.__send(pic[l:])'''
+				#time.sleep(0.01)
 				self.__send(b'')
-				self.__recv()
+				#self.__recv()
 			else:
 				self.__send(b'')
 
@@ -277,7 +315,7 @@ class Application:
 			else:
 				buttons[pin]=0
 
-		time.sleep(0.01)
+		#time.sleep(0.01)
 		#print(self.buttons)
 		return buttons
 
@@ -299,18 +337,20 @@ class Application:
 					self.imgIsNew=False
 					pic=pic.convert('1')
 					pic=pic.tobytes()
-					l=int(len(pic)/2)
+					self.__send(pic)
+					self.__recv()
+					'''l=int(len(pic)/2)
 					self.__recv()
 					self.__send(pic[:l])
-					time.sleep(0.01)
+					#time.sleep(0.01)
 					self.__recv()
-					self.__send(pic[l:])
-					time.sleep(0.01)
+					self.__send(pic[l:])'''
+					#time.sleep(0.01)
 					self.__send(b'')
-					self.__recv()
+					#self.__recv()
 				
 		
-		time.sleep(0.01)
+		#time.sleep(0.01)
 
 	def resumeImg(self):
 		self.imgIsNew=True

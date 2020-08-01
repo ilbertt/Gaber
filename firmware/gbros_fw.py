@@ -4,6 +4,30 @@ import neopixel
 import socket
 import framebuf
 import time
+import struct
+
+def recv_msg(sock):
+    # Read message length and unpack it into an integer
+    raw_msglen = recvall(sock, 4)
+    if not raw_msglen:
+        return None
+    msglen = struct.unpack('>I', raw_msglen)[0]
+    # Read the message data
+    return recvall(sock, msglen)
+
+def recvall(sock, n):
+    # Helper function to recv n bytes or return None if EOF is hit
+    data = bytearray()
+    while len(data) < n:
+        try:
+            sock.settimeout(0.05)
+            packet = sock.recv(n - len(data))
+            '''if not packet:
+                return None'''
+            data.extend(packet)
+        except:
+            pass
+    return data
 
 def run(so):
     pin_in=[]
@@ -11,8 +35,9 @@ def run(so):
     oled_heigth = -1
     oled = 0
     adc=0
+    i2c_msg=0
     send_type=0 # 0: data, 1: nfc, 2: adc
-    so.settimeout(0.05)
+    #so.settimeout(0.05)
     disp=False
     data=b''
     rdr=0
@@ -22,7 +47,7 @@ def run(so):
         msg=0
         if(send_type==0):
             for p in pin_in:
-                msg += ((not Pin(p, Pin.IN, Pin.PULL_UP).value())<<p)
+                msg += (( Pin(p, Pin.IN).value())<<p)
 
         try:
             if(send_type==0):
@@ -31,6 +56,8 @@ def run(so):
                 so.send(str(nfc).encode())
             elif(send_type==2):
                 so.send(str(adc).encode())
+            elif(send_type==3):
+                so.send(i2c_msg)
 
             send_type=0
         except:
@@ -38,10 +65,12 @@ def run(so):
             machine.reset()
 
         s=b''
-        try:
+        '''try:
             s=so.recv(1024)
         except:
-            pass
+            pass'''
+        
+        s=bytes(recv_msg(so))
         
         d=s
         print(len(s))
@@ -65,13 +94,29 @@ def run(so):
             if pin in pin_in:
                 pin_in.remove(pin)
 
-        if(len(s)==4): # read ADC
+        elif(len(s)==4): # read ADC
             pin=int(s)
             adc=ADC(pin)
             send_type=2
             if pin in pin_in:
                 pin_in.remove(pin)
-                
+        
+        elif(len(s)==8): # read I2C
+            #print("i2c")
+            s=int(s)
+            nbytes = s%100
+            s=int(s/100)
+            addr = s%100
+            s=int(s/100)
+            scl = s%100
+            sda=int(s/100)
+            #print(sda,scl,addr,nbytes)
+            
+            i2c=I2C(-1, scl=Pin(scl), sda=Pin(sda))
+            i2c_msg=i2c.readfrom(addr,nbytes)
+            send_type=3
+            #print(i2c_msg)
+            
         elif(len(s)==9): # set PWM
             s=int(s)
             duty=s%10000
@@ -132,25 +177,18 @@ def run(so):
                 from ssd1306 import SSD1306_I2C
                 oled = SSD1306_I2C(oled_width, oled_heigth, i2c)
         
-        if(len(d)==int(oled_heigth*oled_width)/16): # recv Display Image
-            disp= not disp
-            if(not disp):
-                data=data+d
-                p=bytearray(data)
-                fbuf=framebuf.FrameBuffer(p,oled_width, oled_heigth,framebuf.MONO_HLSB)
-                oled.blit(fbuf,0,0)
-                oled.show()
-            else:
-                data=d
-        else:
-            disp=False
-            
+        elif(len(s) != 0):
+            p=bytearray(s)
+            fbuf=framebuf.FrameBuffer(p,oled_width, oled_heigth,framebuf.MONO_HLSB)
+            oled.blit(fbuf,0,0)
+            oled.show()
+               
         time.sleep(0.01)
 
 
-	#so.close()
+#so.close()
 
-	
+ 
 
 
 
