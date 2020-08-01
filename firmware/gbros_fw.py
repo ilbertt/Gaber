@@ -1,4 +1,4 @@
-# firmware v 0.2.1
+# firmware v 0.3.1
 from machine import Pin, I2C, PWM, ADC
 import neopixel
 import socket
@@ -47,7 +47,7 @@ def run(so):
         msg=0
         if(send_type==0):
             for p in pin_in:
-                msg += (( Pin(p, Pin.IN).value())<<p)
+                msg += ((not Pin(p, Pin.IN, Pin.PULL_UP).value())<<p)
 
         try:
             if(send_type==0):
