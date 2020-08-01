@@ -16,6 +16,7 @@ class Device(threading.Thread):
         self.adcvalue=0
         self.nfc=''
         self.customParams = {}
+        self.text = ''
 
 
     def run(self):
@@ -39,9 +40,11 @@ class Device(threading.Thread):
                     self.arguments=[]
                     self.sendType=""
                 elif(self.sendType=="outpin"):
+                    #self.data=self.__app.recvData()
                     self.__app.setOutPin(self.arguments[0],self.arguments[1])
                     self.arguments=[]
                     self.sendType=""
+                    self.data = self.__app.recvData()
                 elif(self.sendType=="inpin"):
                     self.__app.setInPin(self.arguments[0])
                     self.arguments=[]
@@ -59,6 +62,8 @@ class Device(threading.Thread):
                     self.sendType=""
                 else:
                     self.data=self.__app.recvData()
+                
+                #self.nfc=self.__app.readNFC()
                 
             else:
                 if(disc):
@@ -93,6 +98,9 @@ class Device(threading.Thread):
 
     def recvData(self):
         return self.data
+    
+    def readI2C(self, addr, nbytes):
+        return self.__app.readI2C(addr, nbytes)
 
     def sendImg_and_recvData(self):
         self.sendType="image"
@@ -114,6 +122,12 @@ class Device(threading.Thread):
         self.arguments.append(value)
         while( self.sendType=="outpin" and (self.stream and self.isNear)):
             pass
+    
+    def getOutPins(self):
+        return self.__app.outPins
+
+    def getInPins(self):
+        return self.__app.inPins
     
     def setInPin(self, pin):
         self.sendType="inpin"

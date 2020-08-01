@@ -3,12 +3,15 @@ import threading
 import os
 
 class Screen(threading.Thread):
-    def __init__(self, username, device):
+    def __init__(self, username, device, router):
         self.device = device
         self.username = username
+        self.router = router
         self.counter = 0
         self.started = False
         self.deviceChanged = False
+        self.text = ''
+        self.ris = ''
 
     def __startThread(self):
         threading.Thread.__init__(self)
@@ -33,25 +36,46 @@ class Screen(threading.Thread):
         commands = ['ls', 'vcgencmd measure_temp', 'ifconfig']
         i=0
 
+        old_len = 0
+
+        counter = 0
+
+        if self.device:
+
+            self.device.newImg()
+            self.device.setText((35,0),"CONSOLE ", 255,self.device.getFonts()[0])
+            self.device.setText((1,10),">", 255,self.device.getFonts()[0])
+            self.device.sendImg()
+
         while True:
             if self.device:
-                self.device.stream = True
-                self.device.isNear = True
+                #self.device.stream = True
+                #self.device.isNear = True
 
-                if time.time() - startTime > 3 or self.deviceChanged:
-                    self.deviceChanged = False
-                    startTime = time.time()
+                text = self.router.getText()
+
+                if old_len != len(text):
+                    old_len = len(text)
+                    self.text = text
+                    if len(text) != 0:
+                        key = text[len(text)-1]
+                            
+                        if key == '\r':
+                            if self.text[:-1] == 'clear':
+                                self.ris = ''
+                            else:
+                                stream = os.popen(self.text[:-1])
+                                self.ris = stream.read()
+                                stream.close()
+                            self.text = ''
+                            self.router.setText('')
+                        
                     self.device.newImg()
                     self.device.setText((35,0),"CONSOLE ", 255,self.device.getFonts()[0])
                     self.device.setText((1,10),">", 255,self.device.getFonts()[0])
-                    self.device.setText((10,10), commands[i], 255,self.device.getFonts()[0])
-                    stream = os.popen(commands[i])
-                    output = stream.read()
-                    self.device.setText((10,20), output, 255, self.device.getFonts()[0])
+                    self.device.setText((10,10), self.text, 255,self.device.getFonts()[0])
+                    self.device.setText((10,20), self.ris, 255,self.device.getFonts()[0])
                     self.device.sendImg()
-                    i+=1
-                    if i > len(commands)-1:
-                        i=0
     
     def handleStreaming(self, device):
         if self.device!=device:
@@ -59,8 +83,7 @@ class Screen(threading.Thread):
             self.__setDevice(device)
             self.deviceChanged = True
             if old_device != 0:
-                old_device.stream = False
-                old_device.isNear = False
+                old_device.resetStreamingUser()
             if not self.started:
                 self.__startThread()
     

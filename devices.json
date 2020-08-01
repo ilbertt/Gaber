@@ -1,7 +1,7 @@
 {
     "246f28b07d30": {
-                        "name" : "light",
-                        "class" : "led"
+                        "name" : "keyboard",
+                        "class" : "keyboard"
                     },
 
     "98f4ab68fad8": {

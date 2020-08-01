@@ -1,10 +1,12 @@
 from PIL   				import Image
 import time
 import threading
-from numpy.random 		import randint
-from src.iot_funct.door import  Door
-from src.iot_funct.screen import  Screen
-from src.iot_funct.led	import Led
+from numpy.random 			import randint
+
+from src.iot_funct.door 		import Door
+from src.iot_funct.screen 		import Screen
+from src.iot_funct.led			import Led
+from src.iot_funct.keyboard 	import Keyboard
 #from application import Application
 
 class NotifyService(threading.Thread):
@@ -19,9 +21,13 @@ class NotifyService(threading.Thread):
 		self.name = self.username+"_notifyService"
 		self.appList={
 			"door": Door(),
-			"screen": Screen(self.username, self.device),
+			"screen": Screen(self.username, self.device, self.router),
+			"keyboard": Keyboard(self.username, self.device, self.router),
 			"led": Led()
 			} #{"dev.type": IOT_Functions()}
+		
+		self.notToResetType = ["screen", "keyboard"]
+		self.threadType = ["screen", "keyboard"]
 
 	def run(self):
 		print(self.app.getUsername()+": notify started")
@@ -80,14 +86,15 @@ class NotifyService(threading.Thread):
 						stop = True
 
 				if(accepted):
-					if devType == "screen":
+					if devType in self.threadType:
 						self.appList[devType].handleStreaming(self.device)
 					else:
 						self.appList[devType].run(self.device)
 
 				self.app.setNeopixel([0, 0, 0], -1, True)
 				self.app.stopNotify()
-				self.device.resetStreamingUser()
+				if not (devType in self.notToResetType):
+					self.device.resetStreamingUser()
 				self.device=0
 			
 	def getUsedDevices(self):

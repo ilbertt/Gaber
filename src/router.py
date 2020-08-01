@@ -7,6 +7,7 @@ class Router:
         self.nearDevices = {}
         self.streamingDevices = []
         self.users = {}
+        self.text = ''
 
         with open("src/userDevices.json", "r") as rf:
             self.userDevices = json.load(rf)
@@ -78,3 +79,15 @@ class Router:
                         device.streamingUser = ""
             
             return dev
+    
+    def getText(self):
+        return self.text
+    
+    def setText(self, text):
+        self.text = text
+    
+    def addToText(self, text):
+        self.text += text
+    
+    def removeFromText(self,nChar):
+        self.text = self.text[:-nChar]
