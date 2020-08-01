@@ -14,6 +14,7 @@ class Device(threading.Thread):
         self.arguments=[]
         self.data={}
         self.adcvalue=0
+        self.i2cvalue=None
         self.nfc=''
         self.customParams = {}
         self.text = ''
@@ -44,7 +45,7 @@ class Device(threading.Thread):
                     self.__app.setOutPin(self.arguments[0],self.arguments[1])
                     self.arguments=[]
                     self.sendType=""
-                    self.data = self.__app.recvData()
+                    #self.data = self.__app.recvData()
                 elif(self.sendType=="inpin"):
                     self.__app.setInPin(self.arguments[0])
                     self.arguments=[]
@@ -55,6 +56,9 @@ class Device(threading.Thread):
                     self.sendType=""
                 elif(self.sendType=="adc"):
                     self.adcvalue=self.__app.readAdc(self.arguments[0],self.arguments[1])
+                    self.sendType=""
+                elif(self.sendType=="i2c"):
+                    self.i2cvalue = self.__app.readI2C(self.arguments[0],self.arguments[1])
                     self.sendType=""
                 elif(self.sendType=="setdisplay"):
                     self.__app.setDisplay(self.arguments[0],self.arguments[1], self.arguments[2], self.arguments[3], self.arguments[4])
@@ -99,9 +103,6 @@ class Device(threading.Thread):
     def recvData(self):
         return self.data
     
-    def readI2C(self, addr, nbytes):
-        return self.__app.readI2C(addr, nbytes)
-
     def sendImg_and_recvData(self):
         self.sendType="image"
         while( self.sendType=="image" and (self.stream and self.isNear) ):
@@ -151,6 +152,15 @@ class Device(threading.Thread):
             pass
 
         return self.adcvalue
+
+    def readI2C(self, addr, nbytes):
+        self.sendType="i2c"
+        self.arguments.append(addr)
+        self.arguments.append(nbytes)
+        while( self.sendType=="i2c" and (self.stream and self.isNear)):
+            pass
+
+        return self.i2cvalue
 
     def setDisplay(self, sda, scl, heigth, width, dispType):
         self.sendType="setdisplay"

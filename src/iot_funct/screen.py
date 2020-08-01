@@ -31,14 +31,8 @@ class Screen(threading.Thread):
         return msg
     
     def run(self):
-        startTime = time.time()
-
-        commands = ['ls', 'vcgencmd measure_temp', 'ifconfig']
-        i=0
 
         old_len = 0
-
-        counter = 0
 
         if self.device:
 
@@ -49,12 +43,11 @@ class Screen(threading.Thread):
 
         while True:
             if self.device:
-                #self.device.stream = True
-                #self.device.isNear = True
 
                 text = self.router.getText()
 
-                if old_len != len(text):
+                if old_len != len(text) or self.deviceChanged:
+                    self.deviceChanged=False
                     old_len = len(text)
                     self.text = text
                     if len(text) != 0:
