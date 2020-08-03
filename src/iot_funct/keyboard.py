@@ -43,19 +43,12 @@ class Keyboard(threading.Thread):
         self.device = device
 
     def run(self):
-        start = time.time()
         old_c=''
         while True:
-            '''if time.time()-start > 0.1:
-                start = time.time()
-
-                c = self.device.readI2C(8,1).decode()
-            else:
-                c='' '''
             c=self.device.readI2C(8,1)
 
             if c != old_c:
-                print(c)
+                #print(c)
                 old_c = c
                 if c != b'\x00':
                     if c != b'\x7f': #backspace
