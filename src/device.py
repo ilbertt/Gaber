@@ -173,7 +173,10 @@ class Device(threading.Thread):
             pass
 
     def newImg(self):
-        self.__app.newImg() 
+        self.__app.newImg()
+    
+    def setImg(self, img):
+        self.__app.setImg(img)
 
     def fillImg(self, img_color):
         self.__app.fillImg(img_color)
