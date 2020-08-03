@@ -104,8 +104,7 @@ class Application:
 			#self.sc.settimeout(1)
 			try:
 				data=self.sc.recv(nbytes)
-				print(data)
-				#data.decode()
+				#print(data)
 				self.recvTime = time.time()
 			except:
 				pass			
