@@ -1,6 +1,10 @@
 import time
 import threading
 import os
+# install opencv: https://stackoverflow.com/a/60201245/5094892
+# run python3: LD_PRELOAD=/usr/lib/arm-linux-gnueabihf/libatomic.so.1 python3
+import cv2
+from PIL import Image
 
 class Screen(threading.Thread):
     def __init__(self, username, device, router):
@@ -32,6 +36,10 @@ class Screen(threading.Thread):
     
     def run(self):
 
+        vidcap = cv2.VideoCapture('src/video/gaber.mp4')
+        success,image = vidcap.read()
+        count = 0
+
         old_len = 0
 
         if self.device:
@@ -44,7 +52,17 @@ class Screen(threading.Thread):
         while True:
             if self.device:
 
-                text = self.router.getText()
+                while success:
+                    im=Image.fromarray(image)
+                    im=im.rotate(90, expand=True)
+                    im=im.resize((128,64))
+                    im=im.convert('1')
+                    self.device.setImg(im)
+                    self.device.sendImg()
+                    success,image = vidcap.read()
+                    count+=1
+
+                '''text = self.router.getText()
 
                 if old_len != len(text) or self.deviceChanged:
                     self.deviceChanged=False
@@ -68,7 +86,7 @@ class Screen(threading.Thread):
                     self.device.setText((1,10),">", 255,self.device.getFonts()[0])
                     self.device.setText((10,10), self.text, 255,self.device.getFonts()[0])
                     self.device.setText((10,20), self.ris, 255,self.device.getFonts()[0])
-                    self.device.sendImg()
+                    self.device.sendImg()'''
     
     def handleStreaming(self, device):
         if self.device!=device:
