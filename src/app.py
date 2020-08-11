@@ -10,7 +10,7 @@ class Application:
 	#*****VERSION*****#
 	__version__ = "0.3.2"
 
-	timeout=10
+	timeout=120
 	
 	def __init__(self, sc, address, userData, router=None):
 		self.heigth=0
