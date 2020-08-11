@@ -1,5 +1,5 @@
 {
     "eulero": ["keyboard","back_door","tv_kitchen","tv_livingroom"],
-    "gaber": ["light","tv_kitchen"],
+    "gaber": ["keyboard","back_door","tv_kitchen","tv_livingroom"],
     "mez": ["front_door", "tv_livingroom"]
 }

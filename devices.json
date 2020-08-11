@@ -6,12 +6,12 @@
 
     "98f4ab68fad8": {
                         "name" : "tv_kitchen",
-                        "class" : "screen"
+                        "class" : "console"
                     },
 
     "2462abcab9ac": {
                         "name" : "tv_livingroom",
-                        "class" : "screen"
+                        "class" : "console"
     },
     "500291dedb70": {
         "name": "back_door",

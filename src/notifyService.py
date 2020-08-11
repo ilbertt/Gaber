@@ -7,6 +7,7 @@ from src.iot_funct.door 		import Door
 from src.iot_funct.screen 		import Screen
 from src.iot_funct.led			import Led
 from src.iot_funct.keyboard 	import Keyboard
+from src.iot_funct.console		import Console
 #from application import Application
 
 class NotifyService(threading.Thread):
@@ -22,12 +23,13 @@ class NotifyService(threading.Thread):
 		self.appList={
 			"door": Door(),
 			"screen": Screen(self.username, self.device, self.router),
+			"console": Console(self.username, self.device, self.router),
 			"keyboard": Keyboard(self.username, self.device, self.router),
 			"led": Led()
 			} #{"dev.type": IOT_Functions()}
 		
-		self.notToResetType = ["screen", "keyboard"]
-		self.threadType = ["screen", "keyboard"]
+		self.notToResetType = ["screen", "keyboard", "console"]
+		self.threadType = ["screen", "keyboard", "console"]
 
 	def run(self):
 		print(self.app.getUsername()+": notify started")
@@ -37,7 +39,6 @@ class NotifyService(threading.Thread):
 				if((not (dev in self.recentDevices)) and (dev.getStreamingUser()=="")):
 					dev.setStreamingUser(self.username)
 					self.device=dev
-					self.recentDevices.append(dev)
 
 			for dev in self.recentDevices:
 				if(not (dev in devs)):
@@ -70,11 +71,13 @@ class NotifyService(threading.Thread):
 						datad_old=data['DOWN']
 						if(datad_old):
 							stop=True
+							self.recentDevices.append(dev)
 							
 					elif (data['UP']!=datau_old):
 						datau_old=data['UP']
 						if(datau_old):
 							stop=True	
+							self.recentDevices.append(dev)
 					
 					elif(data['SELECT']!=datas_old):
 						datas_old=data['SELECT']
