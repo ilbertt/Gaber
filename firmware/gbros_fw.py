@@ -1,4 +1,4 @@
-# firmware v 0.3.1
+# firmware v 0.3.2
 from machine import Pin, I2C, PWM, ADC
 import neopixel
 import socket
@@ -44,26 +44,7 @@ def run(so):
     nfc='0'
     while(1):
         #so.setsockopt(socket.TCP_NODELAY,1)
-        msg=0
-        if(send_type==0):
-            for p in pin_in:
-                msg += ((not Pin(p, Pin.IN, Pin.PULL_UP).value())<<p)
-
-        try:
-            if(send_type==0):
-                so.send(str(msg).encode())
-            elif(send_type==1):
-                so.send(str(nfc).encode())
-            elif(send_type==2):
-                so.send(str(adc).encode())
-            elif(send_type==3):
-                so.send(i2c_msg)
-
-            send_type=0
-        except:
-            import machine
-            machine.reset()
-
+        
         s=b''
         '''try:
             s=so.recv(1024)
@@ -182,8 +163,29 @@ def run(so):
             fbuf=framebuf.FrameBuffer(p,oled_width, oled_heigth,framebuf.MONO_HLSB)
             oled.blit(fbuf,0,0)
             oled.show()
-               
-        time.sleep(0.01)
+        
+        #****** send ******#   
+        msg=0
+        if(send_type==0):
+            for p in pin_in:
+                msg += ((not Pin(p, Pin.IN, Pin.PULL_UP).value())<<p)
+
+        try:
+            if(send_type==0):
+                so.send(str(msg).encode())
+            elif(send_type==1):
+                so.send(str(nfc).encode())
+            elif(send_type==2):
+                so.send(str(adc).encode())
+            elif(send_type==3):
+                so.send(i2c_msg)
+
+            send_type=0
+        except:
+            import machine
+            machine.reset()
+
+        #time.sleep(0.01)
 
 
 #so.close()

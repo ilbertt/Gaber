@@ -30,7 +30,7 @@ class Main(threading.Thread):
 
         self.app.newImg()
         self.app.setText((10,0),"GBROS", 255,self.app.getFonts()[1])
-        self.app.setText((32,32),"V 0.2", 255,self.app.getFonts()[1])
+        self.app.setText((18,32),"V "+self.app.getVersion(), 255,self.app.getFonts()[1])
         self.app.sendImg()
         self.app.appSleep(100)
 

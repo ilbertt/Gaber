@@ -7,6 +7,11 @@ import struct
 
 class Application:
 
+	#*****VERSION*****#
+	__version__ = "0.3.2"
+
+	timeout=10
+	
 	def __init__(self, sc, address, userData, router=None):
 		self.heigth=0
 		self.width=0
@@ -49,14 +54,14 @@ class Application:
 
 	def __send(self,data):
 		if (self.canSend and self.alive):
-			#self.sc.settimeout(0)
+			self.sc.settimeout(0)
 			try:
 				self.send_msg(data)
 			except:
 				pass
 	
 	def __sendc(self, data):
-		#self.sc.settimeout(10)
+		self.sc.settimeout(0)
 		try:
 			self.send_msg(data)
 		except:
@@ -64,7 +69,8 @@ class Application:
 
 	def __recv(self):
 		if(self.alive):
-			#self.sc.settimeout(0.05)
+			if(self.canSend):
+				self.sc.settimeout(self.timeout)
 			try:
 				self.data=int(self.sc.recv(1024))
 				self.recvTime = time.time()
@@ -82,12 +88,16 @@ class Application:
 	def __recvNFC(self):
 		data='0'
 		if(self.alive):
-			#self.sc.settimeout(1)
+			self.sc.settimeout(self.timeout)
 			try:
 				data=self.sc.recv(1024).decode()
 				self.recvTime = time.time()
 			except:
-				pass
+				if time.time() - self.recvTime > 20:
+					print(self.getUsername()+": dead")
+					self.sc.close()
+					self.alive=False
+
 		if(data!='0'):
 			data=data.split(":")
 			if(len(data)>=2):
@@ -99,18 +109,24 @@ class Application:
 		return data
 	
 	def __recvI2C(self,nbytes):
-		data='0'
+		data=b'0'
 		if(self.alive):
-			#self.sc.settimeout(1)
+			self.sc.settimeout(self.timeout)
 			try:
 				data=self.sc.recv(nbytes)
 				#print(data)
 				self.recvTime = time.time()
 			except:
-				pass			
+				if time.time() - self.recvTime > 20:
+					print(self.getUsername()+": dead")
+					self.sc.close()
+					self.alive=False			
 		
 		return data
 	
+	def getVersion(self):
+		return self.__version__
+
 	def appSleep(self, recvNumber, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			for _ in range(recvNumber):
@@ -155,6 +171,7 @@ class Application:
 		print("changing socket...")
 		self.recvTime = time.time()
 		self.canSend = False
+		#self.sc.settimeout(1)
 		self.sc=sc
 
 	def getConfig(self, path):
@@ -172,15 +189,15 @@ class Application:
 
 	def setOutPin(self, pin, value, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.__recv()
 			self.__send(str(pin*10+int(not value)).zfill(3).encode())
+			self.__recv()
 
 		#time.sleep(0.01)
 
 	def setInPin(self, pin, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.__recv()
 			self.__sendc(str(pin).zfill(2).encode())
+			self.__recv()
 
 		#time.sleep(0.01)
 
@@ -189,57 +206,50 @@ class Application:
 			self.heigth = heigth
 			self.width = width
 			disp=self.dispList[dispType]
-			self.__recv()
 			self.__sendc((str(sda).zfill(2)+str(scl).zfill(2)+str(heigth).zfill(3)+str(width).zfill(3)+str(disp).zfill(2)).encode())
+			self.__recv()
 		
 		#time.sleep(0.01)
 
 	def setPwm(self, pin, freq, duty, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.__recv()
 			self.__send((str(pin).zfill(2)+str(freq).zfill(3)+str(duty).zfill(4)).encode())
-		
+			self.__recv()
+
 		#time.sleep(0.01)
 
 	def readAdc(self, pin, resolution=1024, notify=False):
 		data=0
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.__recv()
 			self.__send(str(pin).zfill(4))
 			#time.sleep(0.01)
 			data=int(self.__recv())%resolution
-			self.__send(b'')
 
 		#time.sleep(0.01)
 		return data
 
 	def setNFC(self, sclk, mosi, miso, rst, sda, notify=True):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.__recv()
 			self.__sendc((str(sclk).zfill(2)+str(mosi).zfill(2)+str(miso).zfill(2)+str(rst).zfill(2)+str(sda).zfill(2)).encode())
-		
+			self.__recv()
 		#time.sleep(0.01)
 	
 	def readI2C(self, addr, nbytes, notify=False):
 		data = ''
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.__recv()
 			sda = self.I2CPins["sda"]
 			scl = self.I2CPins["scl"]
-			self.__sendc((str(sda).zfill(2)+str(scl).zfill(2)+str(addr).zfill(2)+str(nbytes).zfill(2)).encode())
+			self.__send((str(sda).zfill(2)+str(scl).zfill(2)+str(addr).zfill(2)+str(nbytes).zfill(2)).encode())
 			data = self.__recvI2C(nbytes)
-			self.__send(b'')
 		
 		return data
 
 	def readNFC(self, notify=False):
 		data='0'
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			self.__recv()
 			self.__send(b'1')
 			#time.sleep(0.01)
 			data=self.__recvNFC()
-			self.__send(b'')
 
 		#time.sleep(0.01)
 		return data
@@ -247,7 +257,6 @@ class Application:
 	def setNeopixel(self, status, pin=-1, notify=False):
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
 			if(len(self.neoPins)):
-				self.__recv()
 				if(pin==-1):
 					self.__send((str(self.neoPins[0]).zfill(2)+str(status[0]).zfill(3)+str(status[1]).zfill(3)+str(status[2]).zfill(3)).encode())
 				elif(pin in self.neoPins):
@@ -255,13 +264,15 @@ class Application:
 				else:
 					self.__send(b'')
 
+				self.__recv()
+
 		#time.sleep(0.01)
 
 	def recvData(self, notify=False):
 		data=0
 		if((self.notifyStarted and notify) or (not self.notifyStarted)):
-			data=self.__recv()
 			self.__send(b'')
+			data=self.__recv()
 		buttons = {}
 		for pin in self.inPins:
 			if(data & 1<<self.inPins[pin]["number"]):
@@ -290,22 +301,22 @@ class Application:
 			
 			pic=pic.convert('1')
 			pic=pic.tobytes()
-			data=self.__recv()
 			#time.sleep(0.05)
 			if(self.heigth and self.width and self.imgIsNew):
 				self.imgIsNew=False
 				self.__send(pic)
-				self.__recv()
 				'''l=int(len(pic)/2)
 				self.__send(pic[:l])
 				#time.sleep(0.01)
 				self.__recv()
-				self.__send(pic[l:])'''
+				self.__send(pic[l:])
 				#time.sleep(0.01)
 				self.__send(b'')
-				#self.__recv()
+				self.__recv()'''
 			else:
 				self.__send(b'')
+
+			data=self.__recv()
 
 		buttons = {}
 		for pin in self.inPins:
@@ -338,14 +349,13 @@ class Application:
 					pic=pic.tobytes()
 					self.__send(pic)
 					self.__recv()
-					'''l=int(len(pic)/2)
-					self.__recv()
+					'''self.__recv()
+					l=int(len(pic)/2)
 					self.__send(pic[:l])
 					#time.sleep(0.01)
 					self.__recv()
 					self.__send(pic[l:])'''
 					#time.sleep(0.01)
-					self.__send(b'')
 					#self.__recv()
 				
 		
