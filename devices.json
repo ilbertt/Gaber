@@ -5,12 +5,12 @@
                     },
 
     "98f4ab68fad8": {
-                        "name" : "tv_kitchen",
+                        "name" : "screen_1",
                         "class" : "console"
                     },
 
     "2462abcab9ac": {
-                        "name" : "tv_livingroom",
+                        "name" : "screen_2",
                         "class" : "console"
     },
     "500291dedb70": {

@@ -2,7 +2,7 @@
 
     "contrast": false,
     
-    "rotation": false,
+    "rotation": true,
 
     "custom": {
         "state": false
