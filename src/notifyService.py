@@ -71,13 +71,13 @@ class NotifyService(threading.Thread):
 						datad_old=data['DOWN']
 						if(datad_old):
 							stop=True
-							self.recentDevices.append(dev)
+							#self.recentDevices.append(dev)
 							
 					elif (data['UP']!=datau_old):
 						datau_old=data['UP']
 						if(datau_old):
 							stop=True	
-							self.recentDevices.append(dev)
+							#self.recentDevices.append(dev)
 					
 					elif(data['SELECT']!=datas_old):
 						datas_old=data['SELECT']
@@ -85,7 +85,7 @@ class NotifyService(threading.Thread):
 							stop=True
 							accepted=True
 
-					elif(time.time() - startTime > 10):
+					elif(time.time() - startTime > 30):
 						stop = True
 
 				if(accepted):
@@ -93,6 +93,9 @@ class NotifyService(threading.Thread):
 						self.appList[devType].handleStreaming(self.device)
 					else:
 						self.appList[devType].run(self.device)
+
+				else:
+					self.device.resetStreamingUser()
 
 				self.app.setNeopixel([0, 0, 0], -1, True)
 				self.app.stopNotify()

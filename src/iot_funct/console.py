@@ -79,7 +79,7 @@ class Console(threading.Thread):
                         
                     self.device.newImg()
                     self.device.setText((35,0),"CONSOLE ", 255,self.device.getFonts()[0])
-                    self.device.setText((1,10), self.currDir.replace("demo", "")[:-1]+"$ "+self.text, 255,self.device.getFonts()[0])
+                    self.device.setText((1,10), "~"+self.currDir.replace("demo", "")[:-1]+" $ "+self.text, 255,self.device.getFonts()[0])
                     #self.device.setText((1,20),">", 255,self.device.getFonts()[0])
                     #self.device.setText((10,20), self.text, 255,self.device.getFonts()[0])
                     self.device.setText((10,30), self.ris, 255,self.device.getFonts()[0])

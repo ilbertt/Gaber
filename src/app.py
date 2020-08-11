@@ -10,7 +10,7 @@ class Application:
 	#*****VERSION*****#
 	__version__ = "0.3.2"
 
-	timeout=120
+	timeout=1
 	
 	def __init__(self, sc, address, userData, router=None):
 		self.heigth=0
@@ -75,7 +75,7 @@ class Application:
 				self.data=int(self.sc.recv(1024))
 				self.recvTime = time.time()
 			except:
-				if time.time() - self.recvTime > 20:
+				if time.time() - self.recvTime > 120:
 					print(self.getUsername()+": dead")
 					self.sc.close()
 					self.alive=False
@@ -93,7 +93,7 @@ class Application:
 				data=self.sc.recv(1024).decode()
 				self.recvTime = time.time()
 			except:
-				if time.time() - self.recvTime > 20:
+				if time.time() - self.recvTime > 120:
 					print(self.getUsername()+": dead")
 					self.sc.close()
 					self.alive=False
@@ -117,7 +117,7 @@ class Application:
 				#print(data)
 				self.recvTime = time.time()
 			except:
-				if time.time() - self.recvTime > 20:
+				if time.time() - self.recvTime > 120:
 					print(self.getUsername()+": dead")
 					self.sc.close()
 					self.alive=False			
