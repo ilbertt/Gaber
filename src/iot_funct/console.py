@@ -12,6 +12,7 @@ class Console(threading.Thread):
         self.deviceChanged = False
         self.text = ''
         self.ris = ''
+        self.currDir="demo/"
 
     def __startThread(self):
         threading.Thread.__init__(self)
@@ -56,8 +57,21 @@ class Console(threading.Thread):
                         if key == '\r':
                             if self.text[:-1] == 'clear':
                                 self.ris = ''
+                            elif ("cd" in self.text[:-1]):
+                                self.ris=""
+                                directory=self.text[:-1].split(" ")[1]
+                                if(directory==".."):
+                                    if(self.currDir!="demo/"):
+                                        st=self.currDir.split("/")
+                                        self.currDir="/".join(st[:-2])+"/"
+                                elif(directory!="."):
+                                    if(directory in os.listdir(self.currDir)):
+                                        self.currDir+=directory+"/"
+                                    else:
+                                        self.ris=directory+" not found"
+                                
                             else:
-                                stream = os.popen(self.text[:-1])
+                                stream = os.popen("cd "+self.currDir+" && "+self.text[:-1])
                                 self.ris = stream.read()
                                 stream.close()
                             self.text = ''
@@ -65,9 +79,10 @@ class Console(threading.Thread):
                         
                     self.device.newImg()
                     self.device.setText((35,0),"CONSOLE ", 255,self.device.getFonts()[0])
-                    self.device.setText((1,10),">", 255,self.device.getFonts()[0])
-                    self.device.setText((10,10), self.text, 255,self.device.getFonts()[0])
-                    self.device.setText((10,20), self.ris, 255,self.device.getFonts()[0])
+                    self.device.setText((1,10), self.currDir.replace("demo", "")[:-1]+"$ "+self.text, 255,self.device.getFonts()[0])
+                    #self.device.setText((1,20),">", 255,self.device.getFonts()[0])
+                    #self.device.setText((10,20), self.text, 255,self.device.getFonts()[0])
+                    self.device.setText((10,30), self.ris, 255,self.device.getFonts()[0])
                     self.device.sendImg()
     
     def handleStreaming(self, device):
