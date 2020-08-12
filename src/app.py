@@ -72,7 +72,7 @@ class Application:
 			if(self.canSend):
 				self.sc.settimeout(self.timeout)
 			try:
-				self.data=int(self.sc.recv(1024))
+				self.data=int(self.sc.recv(4))
 				self.recvTime = time.time()
 			except:
 				if time.time() - self.recvTime > 120:
@@ -90,7 +90,7 @@ class Application:
 		if(self.alive):
 			self.sc.settimeout(self.timeout)
 			try:
-				data=self.sc.recv(1024).decode()
+				data=self.sc.recv(4).decode()
 				self.recvTime = time.time()
 			except:
 				if time.time() - self.recvTime > 120:

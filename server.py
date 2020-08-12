@@ -36,7 +36,7 @@ while(1):
 	#so.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY,1)	# send data separately
 	print("-----\nNEW CONNECTION")
 	print(adr)
-	mac=so.recv(1024)
+	mac=so.recv(6)
 	mac=binascii.hexlify(mac).decode()
 	print(mac)
 	
